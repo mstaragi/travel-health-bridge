@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { useTheme } from '@travelhealthbridge/shared/ui/useTheme';

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, ScrollView } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { useTheme } from '@travelhealthbridge/shared/ui/useTheme';
@@ -134,7 +134,7 @@ export default function VaultEmergencyContactsScreen() {
               {index === 0 && <Text style={[styles.primaryBadge, { color: theme.success }]}>PRIMARY</Text>}
               <View style={{ flex: 1 }}>
                 <Text style={{ fontSize: 16, fontWeight: 'bold', color: theme.textPrimary }}>{c.name}</Text>
-                <Text style={{ fontSize: 14, color: theme.textSecondary }}>{c.relationship} • {c.phone}</Text>
+                <Text style={{ fontSize: 14, color: theme.textSecondary }}>{c.relationship} � {c.phone}</Text>
               </View>
               <View style={styles.actions}>
                 {index > 0 && (

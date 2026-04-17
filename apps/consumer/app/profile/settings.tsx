@@ -3,7 +3,7 @@ import { Stack, useRouter } from 'expo-router';
 import { Trash2, ChevronRight, ShieldAlert, LogOut, Clock, Info } from 'lucide-react-native';
 import { useAuthStore } from '../store/authStore';
 import { supabase } from '@travelhealthbridge/shared';
-import { secureStore } from '../lib/secureStore';
+import { secureStore } from '../../lib/secureStore';
 import { database } from '../../db';
 import { palette, typography, spacing, borderRadius } from '@travelhealthbridge/shared/ui/tokens';
 import { Button, Modal } from '@travelhealthbridge/shared/ui';

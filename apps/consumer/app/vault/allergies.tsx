@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { useTheme } from '@travelhealthbridge/shared/ui/useTheme';
@@ -91,7 +91,7 @@ export default function VaultAllergiesScreen() {
         <View style={styles.chipsRow}>
           {allergies.map(a => (
             <TouchableOpacity key={a} onPress={() => removeAllergy(a)} style={[styles.chip, { backgroundColor: theme.dangerLight }]}>
-              <Text style={{ color: theme.dangerDark }}>{a}  ✕</Text>
+              <Text style={{ color: theme.dangerDark }}>{a}  ?</Text>
             </TouchableOpacity>
           ))}
         </View>

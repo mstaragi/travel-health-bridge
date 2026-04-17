@@ -13,7 +13,7 @@ import { HelplineCTA } from '@travelhealthbridge/shared/ui/HelplineCTA';
 import { ConsentMessageModal } from '@travelhealthbridge/shared/ui/ConsentMessageModal';
 import { palette, typography, spacing } from '@travelhealthbridge/shared/ui/tokens';
 import { Phone, MapPin, AlertCircle, ChevronDown, ChevronUp, MessageCircle } from 'lucide-react-native';
-import { useTriageStore } from '../../store/triageStore';
+import { useTriageStore } from '../store/triageStore';
 import { database } from '../../db';
 import { logSOS } from '../../lib/analytics';
 import { track } from '@travelhealthbridge/shared';

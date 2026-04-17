@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, ScrollView } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { useTheme } from '@travelhealthbridge/shared/ui/useTheme';
@@ -119,7 +119,7 @@ export default function VaultMedicationsScreen() {
             <View key={m.id} style={[styles.medItem, { backgroundColor: theme.surfaceRaised, borderColor: theme.border }]}>
               <View style={{ flex: 1 }}>
                 <Text style={{ fontSize: 16, fontWeight: 'bold', color: theme.textPrimary }}>{m.name}</Text>
-                <Text style={{ fontSize: 14, color: theme.textSecondary }}>{m.dosage} • {m.frequency}</Text>
+                <Text style={{ fontSize: 14, color: theme.textSecondary }}>{m.dosage} � {m.frequency}</Text>
               </View>
               <TouchableOpacity onPress={() => removeMed(m.id)}>
                 <Text style={{ color: theme.danger, fontWeight: 'bold' }}>Remove</Text>

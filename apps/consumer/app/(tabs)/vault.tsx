@@ -64,9 +64,7 @@ export default function VaultScreen() {
   const handleShare = async () => {
     track('vault_share_tapped');
     let summary = '🏥 Medical Emergency Travel Card\n(Shared from Travel Health Bridge)\n\n';
-    // ...
-  };
-    
+
     if (bloodGroup) {
       const bgText = bloodGroup === "Don't know" ? "Unknown" : bloodGroup;
       summary += `Blood Group: ${bgText}\n`;

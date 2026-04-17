@@ -1,5 +1,5 @@
-﻿/**
- * Component Gallery — Prompt 2 Verification Screen
+/**
+ * Component Gallery � Prompt 2 Verification Screen
  *
  * Shows all shared UI components in all states.
  * Verifies:
@@ -47,7 +47,7 @@ import {
   palette,
 } from '@travelhealthbridge/shared/ui';
 
-// ── Mock data ─────────────────────────────────────────────────
+// -- Mock data -------------------------------------------------
 
 const MOCK_PROVIDER = {
   id: 'p1',
@@ -96,7 +96,7 @@ const MOCK_OFFLINE_PROVIDER = {
   last_synced_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
 };
 
-// ── Section header ─────────────────────────────────────────────
+// -- Section header ---------------------------------------------
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   const { theme } = useTheme();
@@ -120,7 +120,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
-// ── Gallery Screen ─────────────────────────────────────────────
+// -- Gallery Screen ---------------------------------------------
 
 export default function GalleryScreen() {
   const { theme, isDark } = useTheme();
@@ -135,7 +135,7 @@ export default function GalleryScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
-      {/* Imperative toast provider — mounted once */}
+      {/* Imperative toast provider � mounted once */}
       <ToastProvider />
 
       <ScrollView
@@ -157,32 +157,32 @@ export default function GalleryScreen() {
           TravelMedix
         </Text>
         <Text style={{ fontSize: typography.fontSize.base, color: theme.textSecondary, marginBottom: spacing['2xl'] }}>
-          Component Gallery · {isDark ? 'Dark Mode' : 'Light Mode'}
+          Component Gallery � {isDark ? 'Dark Mode' : 'Light Mode'}
         </Text>
 
-        {/* ── BUTTONS ── */}
-        <Section title="Button — All Variants">
+        {/* -- BUTTONS -- */}
+        <Section title="Button � All Variants">
           <Button label="Primary Button" onPress={() => {}} variant="primary" />
           <Button label="Secondary Button" onPress={() => {}} variant="secondary" />
           <Button label="Danger Button" onPress={() => {}} variant="danger" />
           <Button label="Ghost Button" onPress={() => {}} variant="ghost" />
           {/* Emergency: min 72px, 24pt, full-width, red */}
-          <Button label="🚨 Emergency — WhatsApp Now" onPress={() => {}} variant="emergency" />
+          <Button label="?? Emergency � WhatsApp Now" onPress={() => {}} variant="emergency" />
           <Button label="Loading..." onPress={() => {}} loading />
           <Button label="Disabled" onPress={() => {}} disabled />
         </Section>
 
-        {/* ── CARD ── */}
+        {/* -- CARD -- */}
         <Section title="Card">
           <Card padding="md"><Text style={{ color: theme.textPrimary }}>Default card with medium padding</Text></Card>
-          <Card padding="lg" elevated><Text style={{ color: theme.textPrimary }}>Elevated card — large padding</Text></Card>
+          <Card padding="lg" elevated><Text style={{ color: theme.textPrimary }}>Elevated card � large padding</Text></Card>
         </Section>
 
-        {/* ── TAG + LANGUAGE PILLS ── */}
+        {/* -- TAG + LANGUAGE PILLS -- */}
         <Section title="Tag + LanguagePill">
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
             <Tag label="Custom Tag" backgroundColor={palette.blue[100]} textColor={palette.blue[800]} />
-            <Tag label="With Icon" icon="⚡" backgroundColor={palette.amber[100]} textColor={palette.amber[900]} />
+            <Tag label="With Icon" icon="?" backgroundColor={palette.amber[100]} textColor={palette.amber[900]} />
           </View>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
             {['English', 'Hindi', 'Tamil', 'Bengali', 'Other'].map((lang) => (
@@ -191,14 +191,14 @@ export default function GalleryScreen() {
           </View>
         </Section>
 
-        {/* ── BADGE ── */}
+        {/* -- BADGE -- */}
         <Section title="Badge">
           <Badge date="2025-12-01" />
           <Badge date="2025-10-01" compact />
         </Section>
 
-        {/* ── OPEN STATUS BADGE ── */}
-        <Section title="OpenStatusBadge — All 4 Variants">
+        {/* -- OPEN STATUS BADGE -- */}
+        <Section title="OpenStatusBadge � All 4 Variants">
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
             <OpenStatusBadge status="open" />
             <OpenStatusBadge status="opening_soon" opensAt="11:00" />
@@ -207,36 +207,36 @@ export default function GalleryScreen() {
           </View>
         </Section>
 
-        {/* ── INPUT ── */}
+        {/* -- INPUT -- */}
         <Section title="Input">
           <Input label="Default Input" placeholder="Type something..." />
           <Input label="With Error" placeholder="Type something..." error="This field is required" required />
           <Input label="With Helper Text" placeholder="Search..." helper="Search by name or area" />
         </Section>
 
-        {/* ── OTP INPUT ── */}
-        <Section title="OTPInput — 6-digit auto-advance">
+        {/* -- OTP INPUT -- */}
+        <Section title="OTPInput � 6-digit auto-advance">
           <OTPInput
             onComplete={(otp) => setOTPValue(otp)}
             onChangeText={setOTPValue}
           />
           {otpValue.length === 6 ? (
             <Text style={{ color: theme.success, textAlign: 'center', fontSize: typography.fontSize.sm }}>
-              ✓ OTP: {otpValue}
+              ? OTP: {otpValue}
             </Text>
           ) : null}
         </Section>
 
-        {/* ── SKELETON ── */}
-        <Section title="Skeleton — Shimmer Loading">
+        {/* -- SKELETON -- */}
+        <Section title="Skeleton � Shimmer Loading">
           <Skeleton width="80%" height={20} />
           <Skeleton width="60%" height={14} />
           <Skeleton width={80} height={80} borderRadiusSize="full" />
           <ProviderCardSkeleton />
         </Section>
 
-        {/* ── TOAST ── */}
-        <Section title="Toast — Imperative API">
+        {/* -- TOAST -- */}
+        <Section title="Toast � Imperative API">
           <Button
             label="Show Success Toast"
             onPress={() => Toast.show({ type: 'success', message: 'Provider saved!' })}
@@ -254,8 +254,8 @@ export default function GalleryScreen() {
           />
         </Section>
 
-        {/* ── HELPLINE CTA — CRITICAL ── */}
-        <Section title="HelplineCTA — Plain text number ALWAYS visible">
+        {/* -- HELPLINE CTA � CRITICAL -- */}
+        <Section title="HelplineCTA � Plain text number ALWAYS visible">
           {/* SPEC VERIFICATION: number readable without any tap */}
           <HelplineCTA city="Delhi" />
           <HelplineCTA
@@ -266,8 +266,8 @@ export default function GalleryScreen() {
           />
         </Section>
 
-        {/* ── PROVIDER CARD ── */}
-        <Section title="ProviderCard — Live Result">
+        {/* -- PROVIDER CARD -- */}
+        <Section title="ProviderCard � Live Result">
           <ProviderCard
             provider={MOCK_PROVIDER}
             openStatus="open"
@@ -283,13 +283,13 @@ export default function GalleryScreen() {
           />
         </Section>
 
-        {/* ── OFFLINE PROVIDER CARD ── */}
-        <Section title="OfflineProviderCard — Amber border + cache timestamp">
+        {/* -- OFFLINE PROVIDER CARD -- */}
+        <Section title="OfflineProviderCard � Amber border + cache timestamp">
           <OfflineProviderCard provider={MOCK_OFFLINE_PROVIDER} onPress={() => {}} />
         </Section>
 
-        {/* ── FAILURE BOTTOM SHEET ── */}
-        <Section title="FailureBottomSheet — 3 options">
+        {/* -- FAILURE BOTTOM SHEET -- */}
+        <Section title="FailureBottomSheet � 3 options">
           <Button
             label="Open FailureBottomSheet"
             onPress={() => setFailureVisible(true)}
@@ -306,8 +306,8 @@ export default function GalleryScreen() {
           />
         </Section>
 
-        {/* ── CONSENT MESSAGE MODAL (Amendment 5) ── */}
-        <Section title="ConsentMessageModal — Amendment 5">
+        {/* -- CONSENT MESSAGE MODAL (Amendment 5) -- */}
+        <Section title="ConsentMessageModal � Amendment 5">
           <Button
             label="Open ConsentMessageModal (with contact)"
             onPress={() => setConsentVisible(true)}
@@ -336,8 +336,8 @@ export default function GalleryScreen() {
           </Card>
         </Section>
 
-        {/* ── QUICK CASE MODAL (Amendment 2) ── */}
-        <Section title="QuickCaseModal — Amendment 2 (Admin)">
+        {/* -- QUICK CASE MODAL (Amendment 2) -- */}
+        <Section title="QuickCaseModal � Amendment 2 (Admin)">
           {quickCaseVisible ? (
             <QuickCaseModal
               onSubmit={async (c) => {
@@ -356,8 +356,8 @@ export default function GalleryScreen() {
           )}
         </Section>
 
-        {/* ── DAILY SUMMARY CARD (Admin) ── */}
-        <Section title="DailySummaryCard — Admin Console">
+        {/* -- DAILY SUMMARY CARD (Admin) -- */}
+        <Section title="DailySummaryCard � Admin Console">
           <DailySummaryCard
             data={{
               triage_sessions_today: 23,

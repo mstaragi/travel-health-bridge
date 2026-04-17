@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Linking, TouchableOpacity } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import * as Location from 'expo-location';
@@ -60,7 +60,7 @@ export default function NotCoveredEmergencyScreen() {
         <View style={styles.checklist}>
           {NON_COVERED_CITY_CHECKLIST.map((item, index) => (
             <View key={index} style={styles.checklistItem}>
-              <Text style={styles.bullet}>•</Text>
+              <Text style={styles.bullet}>�</Text>
               <Text style={styles.itemText}>{item}</Text>
             </View>
           ))}

@@ -7,7 +7,6 @@ import { palette } from '@travelhealthbridge/shared/ui/tokens';
 import { ConsentModal } from '@travelhealthbridge/shared/ui/ConsentModal';
 import * as SecureStore from 'expo-secure-store';
 import { PostHogProvider } from 'posthog-react-native';
-import { PostHogProvider } from 'posthog-react-native';
 import { posthog } from '../lib/analytics';
 import { track } from '@travelhealthbridge/shared';
 import { useLocalSearchParams } from 'expo-router';
