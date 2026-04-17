@@ -1,4 +1,9 @@
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { track } from '../index';
+import { Button } from './Button';
+import { palette, typography, spacing } from './tokens';
+import { XCircle, Phone, RefreshCcw } from 'lucide-react-native';
 
 interface FailureBottomSheetProps {
   onCallHelpline: () => void;
