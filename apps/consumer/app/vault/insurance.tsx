@@ -3,8 +3,8 @@ import { View, Text, StyleSheet, TextInput } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { useTheme } from '@travelhealthbridge/shared/ui/useTheme';
 import { Button } from '@travelhealthbridge/shared/ui/Button';
-import { database } from '../../db';
-import { VaultEntry } from '../../db/models/VaultEntry';
+import { database } from 'db';
+import { VaultEntry } from 'db/models/VaultEntry';
 
 export default function VaultInsuranceScreen() {
   const { theme } = useTheme();
@@ -88,3 +88,5 @@ const styles = StyleSheet.create({
   label: { fontSize: 14, fontWeight: 'bold', marginBottom: 8 },
   input: { borderWidth: 1, borderRadius: 8, paddingHorizontal: 12, paddingVertical: 12, marginBottom: 20 },
 });
+
+

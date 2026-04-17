@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Platform, FlatList } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useTriageStore } from '../store/triageStore';
+import { useTriageStore } from 'store/triageStore';
 import { palette, typography, spacing } from '@travelhealthbridge/shared/ui/tokens';
 import { track } from '@travelhealthbridge/shared';
 
@@ -148,3 +148,5 @@ const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.medium,
   },
 });
+
+

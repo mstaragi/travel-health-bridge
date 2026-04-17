@@ -3,8 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, ScrollView 
 import { Stack, router } from 'expo-router';
 import { useTheme } from '@travelhealthbridge/shared/ui/useTheme';
 import { Button } from '@travelhealthbridge/shared/ui/Button';
-import { database } from '../../db';
-import { VaultEntry } from '../../db/models/VaultEntry';
+import { database } from 'db';
+import { VaultEntry } from 'db/models/VaultEntry';
 
 const RELATIONSHIPS = ['Spouse', 'Parent', 'Sibling', 'Friend', 'Child', 'Other'];
 const MAX_CONTACTS = 2;
@@ -169,3 +169,5 @@ const styles = StyleSheet.create({
   primaryBadge: { fontSize: 11, fontWeight: '900', marginBottom: 8 },
   actions: { flexDirection: 'row', justifyContent: 'flex-end', marginTop: 12 }
 });
+
+

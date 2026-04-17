@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useLocalSearchParams, Stack, router } from 'expo-router';
 import { useTheme } from '@travelhealthbridge/shared/ui/useTheme';
@@ -10,7 +10,7 @@ const PRIOR_SOURCES = [
   'Google Maps or internet search',
   'A friend or local person',
   'My insurance helpline',
-  'No — Travel Health Bridge was my first step'
+  'No � Travel Health Bridge was my first step'
 ];
 
 export default function FeedbackScreen() {
@@ -104,7 +104,7 @@ export default function FeedbackScreen() {
               ))}
             </View>
             {costAccurate === 'No' && (
-              <TouchableOpacity style={{marginTop: 16}}><Text style={{color: theme.danger}}>Report this overcharge →</Text></TouchableOpacity>
+              <TouchableOpacity style={{marginTop: 16}}><Text style={{color: theme.danger}}>Report this overcharge ?</Text></TouchableOpacity>
             )}
             <View style={{height: 24}}/>
             <Button variant="primary" label="Continue" disabled={!costAccurate} onPress={nextStep} />
@@ -118,7 +118,7 @@ export default function FeedbackScreen() {
              <View style={{ flexDirection: 'row', gap: 8 }}>
                {[1,2,3,4,5].map(s => (
                  <TouchableOpacity key={s} onPress={() => setStars(s)} style={{ padding: 12, backgroundColor: stars === s ? theme.warning : theme.surface, borderWidth: 1, borderColor: theme.border, borderRadius: 8 }}>
-                   <Text style={{fontWeight: 'bold', color: stars === s ? '#fff' : theme.textPrimary}}>{s} ★</Text>
+                   <Text style={{fontWeight: 'bold', color: stars === s ? '#fff' : theme.textPrimary}}>{s} ?</Text>
                  </TouchableOpacity>
                ))}
              </View>
@@ -164,3 +164,5 @@ const styles = StyleSheet.create({
   card: { padding: 16, borderRadius: 12, borderWidth: 1, borderColor: '#eee', backgroundColor: '#fff' },
   optionBtn: { padding: 16, borderWidth: 1, borderRadius: 8, marginBottom: 8 }
 });
+
+

@@ -5,7 +5,7 @@ import { supabase, CITIES, LANGUAGES, track, identify } from '@travelhealthbridg
 import { Input } from '@travelhealthbridge/shared/ui/Input';
 import { Button } from '@travelhealthbridge/shared/ui/Button';
 import { Tag } from '@travelhealthbridge/shared/ui/Tag';
-import { registerForPushNotificationsAsync } from '../../lib/notifications';
+import { registerForPushNotificationsAsync } from 'lib/notifications';
 
 export default function ProfileSetupScreen() {
   const [name, setName] = useState('');
@@ -221,3 +221,5 @@ const styles = StyleSheet.create({
     borderTopColor: palette.gray[200],
   },
 });
+
+

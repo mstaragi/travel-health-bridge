@@ -3,8 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, ScrollView 
 import { Stack, router } from 'expo-router';
 import { useTheme } from '@travelhealthbridge/shared/ui/useTheme';
 import { Button } from '@travelhealthbridge/shared/ui/Button';
-import { database } from '../../db';
-import { VaultEntry } from '../../db/models/VaultEntry';
+import { database } from 'db';
+import { VaultEntry } from 'db/models/VaultEntry';
 
 const FREQUENCIES = ['Once daily', 'Twice daily', 'Three times daily', 'As needed'];
 const MAX_MEDS = 10;
@@ -145,3 +145,5 @@ const styles = StyleSheet.create({
   list: { gap: 12 },
   medItem: { flexDirection: 'row', padding: 16, borderRadius: 8, borderWidth: 1, alignItems: 'center' }
 });
+
+

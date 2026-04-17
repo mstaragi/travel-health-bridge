@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Platform, ScrollView, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useRouter } from 'expo-router';
 import NetInfo from '@react-native-community/netinfo';
-import { useTriageStore } from '../store/triageStore';
-import { useAuthStore } from '../store/authStore';
+import { useTriageStore } from 'store/triageStore';
+import { useAuthStore } from 'store/authStore';
 import { Button } from '@travelhealthbridge/shared/ui/Button';
 import { Input } from '@travelhealthbridge/shared/ui/Input';
 import { palette, typography, spacing } from '@travelhealthbridge/shared/ui/tokens';
@@ -238,3 +238,5 @@ const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.bold,
   },
 });
+
+

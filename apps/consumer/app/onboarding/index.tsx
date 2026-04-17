@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, Dimensions, FlatList, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useAuthStore } from '../store/authStore';
+import { useAuthStore } from 'store/authStore';
 import { Button } from '@travelhealthbridge/shared/ui/Button';
 import { palette, typography, spacing } from '@travelhealthbridge/shared/ui/tokens';
 import { ShieldCheck, MapPin, Zap } from 'lucide-react-native';
@@ -194,3 +194,5 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
 });
+
+

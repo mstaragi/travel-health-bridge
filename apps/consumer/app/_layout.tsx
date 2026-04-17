@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Slot, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useAuthStore } from './store/authStore';
+import { useAuthStore } from 'store/authStore';
 import { View, ActivityIndicator } from 'react-native';
 import { palette } from '@travelhealthbridge/shared/ui/tokens';
 import { ConsentModal } from '@travelhealthbridge/shared/ui/ConsentModal';
 import * as SecureStore from 'expo-secure-store';
 import { PostHogProvider } from 'posthog-react-native';
-import { posthog } from '../lib/analytics';
+import { posthog } from 'lib/analytics';
 import { track } from '@travelhealthbridge/shared';
 import { useLocalSearchParams } from 'expo-router';
 
@@ -80,3 +80,5 @@ export default function RootLayout() {
     </PostHogProvider>
   );
 }
+
+

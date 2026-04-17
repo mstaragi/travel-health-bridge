@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, ScrollView, Platform, TouchableOpacity, Linking } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useTriageStore } from '../store/triageStore';
+import { useTriageStore } from 'store/triageStore';
 import { palette, typography, spacing } from '@travelhealthbridge/shared/ui/tokens';
 import { WifiOff, Phone, MapPin, AlertCircle, ShieldAlert } from 'lucide-react-native';
 import { Button } from '@travelhealthbridge/shared/ui/Button';
@@ -218,3 +218,5 @@ const styles = StyleSheet.create({
     lineHeight: 16,
   },
 });
+
+

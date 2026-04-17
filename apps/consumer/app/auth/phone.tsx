@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, SafeAreaView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { supabase } from '@travelhealthbridge/shared';
-import { useAuthStore } from '../store/authStore';
+import { useAuthStore } from 'store/authStore';
 import { Input } from '@travelhealthbridge/shared/ui/Input';
 import { Button } from '@travelhealthbridge/shared/ui/Button';
 import { palette, typography, spacing } from '@travelhealthbridge/shared/ui/tokens';
@@ -240,3 +240,5 @@ const styles = StyleSheet.create({
     borderColor: '#25D366',
   },
 });
+
+

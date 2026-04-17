@@ -4,8 +4,8 @@ import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Button } from '@travelhealthbridge/shared/ui/Button';
 import { Tag } from '@travelhealthbridge/shared/ui/Tag';
 import { palette, typography, spacing, borderRadius, shadows } from '@travelhealthbridge/shared/ui/tokens';
-import { database } from '../db';
-import { VisitHistory } from '../db/models/VisitHistory';
+import { database } from 'db';
+import { VisitHistory } from 'db/models/VisitHistory';
 
 export default function VisitDetailScreen() {
   const { id } = useLocalSearchParams();
@@ -199,3 +199,5 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
 });
+
+

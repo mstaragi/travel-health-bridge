@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, Platform, TouchableOpacity, Linking, Image } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useTriageStore } from '../store/triageStore';
+import { useTriageStore } from 'store/triageStore';
 import { rankProviders } from '@travelhealthbridge/shared/utils/rankProviders';
 import { HELPLINE_NUMBER } from '@travelhealthbridge/shared/constants';
 import { FailureBottomSheet } from '@travelhealthbridge/shared/ui/FailureBottomSheet';
@@ -554,3 +554,5 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
 });
+
+

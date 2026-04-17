@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useTriageStore } from '../store/triageStore';
+import { useTriageStore } from 'store/triageStore';
 import { palette, typography, spacing } from '@travelhealthbridge/shared/ui/tokens';
 import { AlertTriangle, Clock, Calendar } from 'lucide-react-native';
 
@@ -182,3 +182,5 @@ const styles = StyleSheet.create({
     fontSize: typography.fontSize.sm,
   },
 });
+
+

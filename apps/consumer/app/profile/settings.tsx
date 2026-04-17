@@ -1,10 +1,10 @@
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Alert, ActivityIndicator, Switch } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { Trash2, ChevronRight, ShieldAlert, LogOut, Clock, Info } from 'lucide-react-native';
-import { useAuthStore } from '../store/authStore';
+import { useAuthStore } from 'store/authStore';
 import { supabase } from '@travelhealthbridge/shared';
-import { secureStore } from '../../lib/secureStore';
-import { database } from '../../db';
+import { secureStore } from 'lib/secureStore';
+import { database } from 'db';
 import { palette, typography, spacing, borderRadius } from '@travelhealthbridge/shared/ui/tokens';
 import { Button, Modal } from '@travelhealthbridge/shared/ui';
 
@@ -370,3 +370,5 @@ const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.medium,
   }
 });
+
+

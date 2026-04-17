@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { supabase } from '@travelhealthbridge/shared';
-import { useAuthStore } from '../store/authStore';
+import { useAuthStore } from 'store/authStore';
 import { OTPInput } from '@travelhealthbridge/shared/ui/OTPInput';
 import { Button } from '@travelhealthbridge/shared/ui/Button';
 import { palette, typography, spacing } from '@travelhealthbridge/shared/ui/tokens';
@@ -241,3 +241,5 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
 });
+
+

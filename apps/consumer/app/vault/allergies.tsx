@@ -3,8 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert } from 'reac
 import { Stack, router } from 'expo-router';
 import { useTheme } from '@travelhealthbridge/shared/ui/useTheme';
 import { Button } from '@travelhealthbridge/shared/ui/Button';
-import { database } from '../../db';
-import { VaultEntry } from '../../db/models/VaultEntry';
+import { database } from 'db';
+import { VaultEntry } from 'db/models/VaultEntry';
 
 const SUGGESTIONS = ['Penicillin', 'Aspirin', 'Sulfa', 'NSAIDs', 'Peanuts', 'Shellfish', 'Latex', 'Iodine', 'Codeine'];
 const MAX_ALLERGIES = 20;
@@ -124,3 +124,5 @@ const styles = StyleSheet.create({
   chip: { paddingVertical: 8, paddingHorizontal: 12, borderRadius: 16, borderWidth: 1, borderColor: 'transparent' },
   sectionHeading: { fontSize: 14, marginBottom: 12, fontWeight: 'bold' }
 });
+
+

@@ -3,8 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { useTheme } from '@travelhealthbridge/shared/ui/useTheme';
 import { Button } from '@travelhealthbridge/shared/ui/Button';
-import { database } from '../../db';
-import { VaultEntry } from '../../db/models/VaultEntry';
+import { database } from 'db';
+import { VaultEntry } from 'db/models/VaultEntry';
 import { supabase } from '@travelhealthbridge/shared/api/supabase';
 
 const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', 'Unknown'];
@@ -83,3 +83,5 @@ const styles = StyleSheet.create({
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginBottom: 32 },
   chip: { paddingVertical: 12, paddingHorizontal: 20, borderRadius: 8, borderWidth: 1 }
 });
+
+

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { supabase } from '@travelhealthbridge/shared';
 import { Button } from '@travelhealthbridge/shared/ui/Button';
-import { useAuthStore } from '../store/authStore';
+import { useAuthStore } from 'store/authStore';
 import { palette, typography, spacing, borderRadius } from '@travelhealthbridge/shared/ui/tokens';
 
 export default function ConsentScreen() {
@@ -140,3 +140,5 @@ const styles = StyleSheet.create({
     marginTop: spacing.xl,
   },
 });
+
+
