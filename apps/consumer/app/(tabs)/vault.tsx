@@ -1,4 +1,12 @@
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, ActivityIndicator, Alert, Platform } from 'react-native';
+import { useRouter, Stack } from 'expo-router';
+import { palette, typography, spacing, borderRadius, shadows } from '@travelhealthbridge/shared/ui/tokens';
+import { Button } from '@travelhealthbridge/shared/ui/Button';
+import { Card } from '@travelhealthbridge/shared/ui/Card';
 import { track } from '@travelhealthbridge/shared';
+import { useAuthStore } from 'store/authStore';
+import { database } from 'db';
 
 export default function VaultScreen() {
   const router = useRouter();

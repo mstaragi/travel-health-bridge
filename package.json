@@ -7,15 +7,16 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "npm run consumer:web & npm run provider:web & npm run admin:dev",
+    "dev": "concurrently \"npm run consumer:web\" \"npm run provider:web\" \"npm run admin:dev\"",
     "consumer:web": "npm --prefix apps/consumer run web -- --port 8081",
-    "provider:web": "npm --prefix apps/provider run start -- --port 8082",
+    "provider:web": "npm --prefix apps/provider run web -- --port 8082",
     "admin:dev": "npm --prefix apps/admin run dev -- -p 3000",
     "build:provider": "npm run build --prefix apps/provider",
     "build:admin": "npm run build --prefix apps/admin",
     "test": "node tests/test-rank-providers.js"
   },
   "devDependencies": {
-    "babel-plugin-module-resolver": "^5.0.3"
+    "babel-plugin-module-resolver": "^5.0.3",
+    "concurrently": "^8.2.2"
   }
 }

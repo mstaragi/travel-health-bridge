@@ -1,5 +1,10 @@
+import React, { useRef } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
+import { palette, typography, spacing, borderRadius } from '@travelhealthbridge/shared/ui/tokens';
+import { Button } from '@travelhealthbridge/shared/ui/Button';
 import { track } from '@travelhealthbridge/shared';
-import { useRef } from 'react';
+import { useTriageStore } from 'store/triageStore';
 
 export default function Step3Language() {
   const { languages, setLanguages } = useTriageStore();

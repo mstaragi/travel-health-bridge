@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "expo start --web",
+    "web": "expo start --web",
     "build": "expo export -p web",
     "build:vercel": "expo export -p web --output-dir dist"
   },

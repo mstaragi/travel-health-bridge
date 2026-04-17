@@ -9,7 +9,11 @@ import * as SecureStore from 'expo-secure-store';
 import { PostHogProvider } from 'posthog-react-native';
 import { posthog } from 'lib/analytics';
 import { track } from '@travelhealthbridge/shared';
-import { useLocalSearchParams } from 'expo-router';
+import React from 'react';
+import { Stack } from 'expo-router';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+import { ThemeProvider } from '../packages/shared/ui/useTheme';
 
 export default function RootLayout() {
   const { isLoading, hasSeenOnboarding, session, isGuest, initialize } = useAuthStore();

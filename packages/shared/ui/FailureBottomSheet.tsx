@@ -36,7 +36,7 @@ export const FailureBottomSheet: React.FC<FailureBottomSheetProps> = ({
       
       <View style={styles.content}>
         <View style={styles.header}>
-          <XCircle size={48} color={palette.rose[600]} />
+          <XCircle size={48} color={palette.red[600]} />
           <Text style={styles.title}>Provider didn't answer?</Text>
           <Text style={styles.subtitle}>
             Don't worry, our 24/7 medical response team is standing by to help you manually.
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   primaryButton: {
-    backgroundColor: palette.rose[600],
+    backgroundColor: palette.red[600],
   },
   retryButton: {
     flexDirection: 'row',

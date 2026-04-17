@@ -1,4 +1,40 @@
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Linking, Platform, ActivityIndicator } from 'react-native';
+import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { palette, typography, spacing, shadows } from '@travelhealthbridge/shared/ui/tokens';
+import { Button } from '@travelhealthbridge/shared/ui/Button';
+import { Badge } from '@travelhealthbridge/shared/ui/Badge';
+import { OpenStatusBadge } from '@travelhealthbridge/shared/ui/OpenStatusBadge';
+import { LanguagePill } from '@travelhealthbridge/shared/ui/LanguagePill';
+import { FailureBottomSheet } from '@travelhealthbridge/shared/ui/FailureBottomSheet';
 import { track } from '@travelhealthbridge/shared';
+import { isOpenNow, formatFeeRange } from '@travelhealthbridge/shared/utils/openStatus';
+
+// Internal Mock functions
+const fetchMockProvider = (id: string) => ({
+  id,
+  name: 'Apollo Clinic Connaught Place',
+  area: 'Connaught Place',
+  city: 'New Delhi',
+  verified: true,
+  badge_date: 'April 2026',
+  staleness_tier: 'fresh',
+  languages: ['English', 'Hindi', 'Punjabi'],
+  fee_opd: { min: 800, max: 1200 },
+  opd_hours: {
+    'Monday': [{ open: '09:00', close: '18:00' }],
+    'Tuesday': [{ open: '09:00', close: '18:00' }],
+    'Wednesday': [{ open: '09:00', close: '18:00' }],
+    'Thursday': [{ open: '09:00', close: '18:00' }],
+    'Friday': [{ open: '09:00', close: '18:00' }],
+    'Saturday': [{ open: '10:00', close: '14:00' }],
+    'Sunday': []
+  },
+  lat: 28.6328,
+  lng: 77.2197
+});
+
+type Provider = ReturnType<typeof fetchMockProvider>;
 
 export default function ProviderProfileScreen() {
   const { id } = useLocalSearchParams();
