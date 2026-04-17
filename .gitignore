@@ -28,3 +28,5 @@ logs/
 # EAS
 eas-build-config.json
 credentials.json
+
+.vercel
