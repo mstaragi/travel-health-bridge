@@ -134,4 +134,3 @@ const styles = StyleSheet.create({
   },
 });
 
-import { Platform } from 'react-native';
