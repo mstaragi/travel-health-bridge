@@ -9,6 +9,8 @@ interface ConsentModalProps {
 }
 
 export const ConsentModal: React.FC<ConsentModalProps> = ({ visible, onAccept }) => {
+  if (!visible) return null;
+
   return (
     <Modal visible={visible} animationType="slide" transparent={false}>
       <SafeAreaView style={styles.container}>
@@ -48,7 +50,7 @@ export const ConsentModal: React.FC<ConsentModalProps> = ({ visible, onAccept })
 
           <View style={styles.footer}>
             <Button
-              title="I Agree & Continue"
+              label="I Agree & Continue"
               onPress={onAccept}
               variant="primary"
               size="lg"

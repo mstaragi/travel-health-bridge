@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Slot, useRouter, useSegments } from 'expo-router';
+import { Slot, useRouter, useSegments, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useAuthStore } from 'store/authStore';
 import { View, ActivityIndicator } from 'react-native';
@@ -14,6 +14,23 @@ import { Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { ThemeProvider } from '../packages/shared/ui/useTheme';
+import { Platform } from 'react-native';
+
+const STORAGE = {
+  getItem: async (key: string) => {
+    if (Platform.OS === 'web') {
+      return localStorage.getItem(key);
+    }
+    return SecureStore.getItemAsync(key);
+  },
+  setItem: async (key: string, value: string) => {
+    if (Platform.OS === 'web') {
+      localStorage.setItem(key, value);
+      return;
+    }
+    return SecureStore.setItemAsync(key, value);
+  }
+};
 
 export default function RootLayout() {
   const { isLoading, hasSeenOnboarding, session, isGuest, initialize } = useAuthStore();
@@ -25,7 +42,7 @@ export default function RootLayout() {
   useEffect(() => {
     const checkConsent = async () => {
       await initialize();
-      const consent = await SecureStore.getItemAsync('consent_given');
+      const consent = await STORAGE.getItem('consent_given');
       if (consent !== 'true') {
         setShowConsent(true);
       }
@@ -43,7 +60,8 @@ export default function RootLayout() {
   }, [isLoading]);
 
   const handleConsent = async () => {
-    await SecureStore.setItemAsync('consent_given', 'true');
+    // Force a small delay to ensure React commits the unmount before navigation
+    await STORAGE.setItem('consent_given', 'true');
     setShowConsent(false);
   };
 

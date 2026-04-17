@@ -5,7 +5,7 @@ import { supabase, CITIES, LANGUAGES, track, identify } from '@travelhealthbridg
 import { Input } from '@travelhealthbridge/shared/ui/Input';
 import { Button } from '@travelhealthbridge/shared/ui/Button';
 import { Tag } from '@travelhealthbridge/shared/ui/Tag';
-import { palette, typography, spacing } from '@travelhealthbridge/shared/ui/tokens';
+import { palette, typography, spacing, borderRadius } from '@travelhealthbridge/shared/ui/tokens';
 import { Toast } from '@travelhealthbridge/shared/ui/Toast';
 import { registerForPushNotificationsAsync } from 'lib/notifications';
 

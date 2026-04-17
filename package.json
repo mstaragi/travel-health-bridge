@@ -8,9 +8,9 @@
   ],
   "scripts": {
     "dev": "concurrently \"npm run consumer:web\" \"npm run provider:web\" \"npm run admin:dev\"",
-    "consumer:web": "npm --prefix apps/consumer run web -- --port 8081",
-    "provider:web": "npm --prefix apps/provider run web -- --port 8082",
-    "admin:dev": "npm --prefix apps/admin run dev -- -p 3000",
+    "consumer:web": "cmd /c \"npm --prefix apps/consumer run web -- --port 8081\"",
+    "provider:web": "cmd /c \"npm --prefix apps/provider run web -- --port 8082 --host localhost\"",
+    "admin:dev": "cmd /c \"npm --prefix apps/admin run dev -- -p 3000\"",
     "build:provider": "npm run build --prefix apps/provider",
     "build:admin": "npm run build --prefix apps/admin",
     "test": "node tests/test-rank-providers.js"
