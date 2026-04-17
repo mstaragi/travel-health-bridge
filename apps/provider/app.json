@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "Travel Health Bridge Provider",
+    "slug": "travel-health-bridge-provider",
+    "version": "1.0.0",
+    "platforms": ["web"],
+    "scheme": "thb-provider",
+    "web": {
+      "bundler": "metro",
+      "output": "server",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "sentry-expo",
+        {
+          "organization": "travelhealthbridge",
+          "project": "provider"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

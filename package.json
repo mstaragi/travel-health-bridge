@@ -1,0 +1,19 @@
+{
+  "name": "travel-health-bridge",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm.cmd run consumer:web & npm.cmd run provider:web & npm.cmd run admin:dev",
+    "consumer:web": "npm.cmd --prefix apps/consumer run web -- --port 8081",
+    "provider:web": "npm.cmd --prefix apps/provider run start -- --port 8082",
+    "admin:dev": "npm.cmd --prefix apps/admin run dev -- -p 3000",
+    "test": "node tests/test-rank-providers.js"
+  },
+  "devDependencies": {
+    "babel-plugin-module-resolver": "^5.0.3"
+  }
+}
