@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, Platform, TouchableOpacity, Linking, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, Platform, TouchableOpacity, Linking, Image, Animated } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTriageStore } from 'store/triageStore';
 import { rankProviders } from '@travelhealthbridge/shared/utils/rankProviders';
-import { HELPLINE_NUMBER } from '@travelhealthbridge/shared/constants';
+import { HELPLINE_WHATSAPP_NUMBER, HELPLINE_OPERATING_HOURS } from '@travelhealthbridge/shared/constants';
 import { FailureBottomSheet } from '@travelhealthbridge/shared/ui/FailureBottomSheet';
 import { palette, typography, spacing } from '@travelhealthbridge/shared/ui/tokens';
-import { Phone, MapPin, Clock, Star, AlertCircle, ChevronRight, Navigation } from 'lucide-react-native';
+import { Phone, MapPin, Clock, Star, AlertCircle, ChevronRight, Navigation, X } from 'lucide-react-native';
 import Modal from 'react-native-modal';
+import { track } from '@travelhealthbridge/shared';
 
 // Mock data for ranking verification until real DB is active
 const MOCK_DATA = [

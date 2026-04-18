@@ -1,10 +1,13 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, ActivityIndicator, Platform } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, ActivityIndicator, Platform, SafeAreaView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { palette, typography, spacing, borderRadius } from '@travelhealthbridge/shared/ui/tokens';
 import { Button } from '@travelhealthbridge/shared/ui/Button';
 import { track } from '@travelhealthbridge/shared';
 import { useTriageStore } from 'store/triageStore';
+import * as Location from 'expo-location';
+import { CITIES } from '@travelhealthbridge/shared/constants';
+import { Navigation, AlertCircle, MapPin, ChevronRight } from 'lucide-react-native';
 
 export default function Step2City() {
   const { city, setCity } = useTriageStore();

@@ -1,12 +1,32 @@
-import PostHog from 'posthog-react-native';
 import { database } from '../db';
 import { TABLES } from '@travelhealthbridge/shared/api/supabase';
+import { Platform } from 'react-native';
+
+// PostHog Shim for Consumer Web
+class PostHogStub {
+  capture(event: string, props?: any) { console.log(`[Consumer Analytics Stub] Capture: ${event}`, props); }
+  identify(id: string, traits?: any) { console.log(`[Consumer Analytics Stub] Identify: ${id}`, traits); }
+  reset() { console.log(`[Consumer Analytics Stub] Reset`); }
+}
+
+let PostHogModule: any = PostHogStub;
+
+// Only load native PostHog on mobile (ensure we don't even try to require it on web)
+if (typeof window === 'undefined' && Platform.OS !== 'web') {
+  try {
+    // We use a dynamic require to keep it hidden from static analysis where possible
+    const NativePostHog = require('posthog-react-native').default;
+    PostHogModule = NativePostHog || PostHogStub;
+  } catch (e) {
+    PostHogModule = PostHogStub;
+  }
+}
 
 const POSTHOG_API_KEY = process.env.EXPO_PUBLIC_POSTHOG_API_KEY || 'phc_placeholder_replace_before_production';
 
-export const posthog = new PostHog(POSTHOG_API_KEY, {
+export const posthog = new PostHogModule(POSTHOG_API_KEY, {
   host: 'https://app.posthog.com',
-  enable: !__DEV__, // Only fire in production per instruction
+  enable: process.env.NODE_ENV === 'production',
 });
 
 interface SOSPayload {

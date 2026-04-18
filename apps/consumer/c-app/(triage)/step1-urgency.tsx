@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTriageStore } from 'store/triageStore';
 import { palette, typography, spacing } from '@travelhealthbridge/shared/ui/tokens';
 import { AlertTriangle, Clock, Calendar } from 'lucide-react-native';
+import { track } from '@travelhealthbridge/shared';
 
 const URGENCY_OPTIONS = [
   {

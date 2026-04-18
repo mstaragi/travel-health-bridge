@@ -1,17 +1,27 @@
 const { getDefaultConfig } = require('expo/metro-config');
 const path = require('path');
+const { FileStore } = require('metro-cache');
 
 const projectRoot = __dirname;
 const workspaceRoot = path.resolve(projectRoot, '../..');
 
 const config = getDefaultConfig(projectRoot);
 
+// 0. EXPLICIT PROJECT ROOT: Force Metro to stay in this directory
+config.projectRoot = projectRoot;
+
 // 1. WATCH FOLDERS LOCKDOWN: Explicitly only watch what is needed
-// This physically prevents Metro from "discovering" files in apps/consumer
 config.watchFolders = [
   projectRoot,
   path.resolve(workspaceRoot, 'packages/shared'),
   path.resolve(workspaceRoot, 'node_modules'),
+];
+
+// 2. CACHE ISOLATION: Unique cache for this app only
+config.cacheStores = [
+  new FileStore({
+    root: path.join(projectRoot, 'node_modules', '.cache', 'metro'),
+  }),
 ];
 
 const exclusionList = require('metro-config/src/defaults/exclusionList');
@@ -27,6 +37,7 @@ config.resolver.nodeModulesPaths = [
 config.resolver.blockList = exclusionList([
   /.*[/\\]apps[/\\]consumer[/\\]/,
   new RegExp(path.resolve(workspaceRoot, 'apps/consumer').replace(/\\/g, '\\\\') + '.*'),
+  /.*apps[/\\]consumer[/\\]\.expo.*/,
 ]);
 
 // Shim better-sqlite3 and native modules for Web builds
@@ -44,7 +55,22 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
       filePath: path.resolve(__dirname, 'dummy.js'),
     };
   }
-  // Chain to the default resolver
+  // 3. SERVER ISOLATION: Unique internal port to prevent socket conflicts
+config.server = {
+  port: 8083,
+};
+
+// 3. SERVER ISOLATION: Unique internal port to prevent socket conflicts
+config.server = {
+  port: 8083,
+};
+
+// 3. SERVER ISOLATION: Unique internal port to prevent socket conflicts
+config.server = {
+  port: 8083,
+};
+
+// Chain to the default resolver
   return context.resolveRequest(context, moduleName, platform);
 };
 

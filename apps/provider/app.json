@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Travel Health Bridge Provider",
-    "slug": "travel-health-bridge-provider",
+    "name": "THB Provider",
+    "slug": "thb-provider",
     "version": "1.0.0",
     "platforms": ["web"],
     "scheme": "thb-provider",
@@ -20,7 +20,8 @@
       ]
     ],
     "experiments": {
-      "typedRoutes": true
+      "typedRoutes": true,
+      "appDir": "p-app"
     }
   }
 }

@@ -1,20 +1,29 @@
 import { useEffect, useState } from 'react';
-import { Slot, useRouter, useSegments, useLocalSearchParams } from 'expo-router';
+import { Slot, useRouter, useSegments, useLocalSearchParams, Redirect, usePathname } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useAuthStore } from 'store/authStore';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, Platform } from 'react-native';
 import { palette } from '@travelhealthbridge/shared/ui/tokens';
 import { ConsentModal } from '@travelhealthbridge/shared/ui/ConsentModal';
 import * as SecureStore from 'expo-secure-store';
-import { PostHogProvider } from 'posthog-react-native';
 import { posthog } from 'lib/analytics';
 import { track } from '@travelhealthbridge/shared';
 import React from 'react';
+
+// Platform-aware PostHogProvider
+let PostHogProvider: any = ({ children }: any) => <>{children}</>;
+if (Platform.OS !== 'web') {
+  try {
+    PostHogProvider = require('posthog-react-native').PostHogProvider;
+  } catch (e) {
+    // Fallback to fragment on failure
+  }
+}
+
 import { Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { ThemeProvider } from '@travelhealthbridge/shared/ui/useTheme';
-import { Platform } from 'react-native';
 
 const STORAGE = {
   getItem: async (key: string) => {
@@ -36,10 +45,21 @@ export default function RootLayout() {
   const { isLoading, hasSeenOnboarding, session, isGuest, initialize } = useAuthStore();
   const [showConsent, setShowConsent] = useState(false);
   const segments = useSegments();
+  const pathname = usePathname();
   const router = useRouter();
   const params = useLocalSearchParams();
 
   useEffect(() => {
+    // NUCLEAR SW PURGE: Unregister EVERY service worker on this origin to prevent cross-port hijacking
+    if (Platform.OS === 'web' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(registrations => {
+        for (let registration of registrations) {
+          registration.unregister();
+          console.log('[NUCLEAR-SW-PURGE] Purged service worker to prevent origin hijacking');
+        }
+      });
+    }
+
     const checkConsent = async () => {
       await initialize();
       const consent = await STORAGE.getItem('consent_given');
@@ -60,31 +80,32 @@ export default function RootLayout() {
   }, [isLoading]);
 
   const handleConsent = async () => {
-    // Force a small delay to ensure React commits the unmount before navigation
     await STORAGE.setItem('consent_given', 'true');
     setShowConsent(false);
   };
 
-  useEffect(() => {
-    if (isLoading) return;
+  // [ABSOLUTE PATH GATING] 
+  // Use window.location.pathname directly for 100% accuracy, bypassing router segment lag.
+  const currentUrlPath = typeof window !== 'undefined' ? window.location.pathname : pathname;
+  
+  // [WHITELIST-ONLY PROTECTION]
+  const protectedPaths = ['profile', 'vault', 'visits', 'settings'];
+  const isProtectedPath = protectedPaths.some(p => currentUrlPath.toLowerCase().includes(p));
 
-    const inAuthGroup = segments[0] === 'auth';
-    const inOnboarding = segments[0] === 'onboarding';
-    const isEmergency = segments[segments.length - 1] === 'emergency' || segments[0] === '(tabs)' && segments[1] === 'emergency';
+  // [DEFINITIVE PUBLIC TRIAGE BYPASS]
+  // This is the CRITICAL SYNC OVERRIDE. If we are in the triage flow, we PHYSICALLY SKIP all auth gating.
+  const isPublicAssessment = 
+    currentUrlPath.includes('step') || 
+    currentUrlPath.includes('triage') || 
+    currentUrlPath.includes('result') || 
+    currentUrlPath === '/' || 
+    currentUrlPath === '';
 
-    // Emergency screen is NEVER gated
-    if (isEmergency) return;
+  const shouldRedirectToAuth = isProtectedPath && !isPublicAssessment && !session && !isGuest;
 
-    if (!hasSeenOnboarding && !inOnboarding) {
-      router.replace('/onboarding');
-    } else if (hasSeenOnboarding) {
-      if (!session && !isGuest && !inAuthGroup) {
-        router.replace('/auth/phone');
-      } else if ((session || isGuest) && (inAuthGroup || inOnboarding)) {
-        router.replace('/');
-      }
-    }
-  }, [isLoading, hasSeenOnboarding, session, isGuest, segments]);
+  if (__DEV__) {
+    console.log(`[ROUTING-SHIELD] Path: "${currentUrlPath}" | Public Assessment: ${isPublicAssessment} | Should Gate: ${shouldRedirectToAuth}`);
+  }
 
   if (isLoading) {
     return (
@@ -92,6 +113,16 @@ export default function RootLayout() {
         <ActivityIndicator size="large" color={palette.teal[400]} />
       </View>
     );
+  }
+
+  // [HARDENED AUTH GATE]
+  if (shouldRedirectToAuth) {
+    return <Redirect href="/auth/phone" />;
+  }
+
+  // [AUTH BYPASS] Don't linger on auth screens if signed in
+  if ((session || isGuest) && currentUrlPath.includes('/auth/')) {
+    return <Redirect href="/" />;
   }
 
   return (
@@ -102,5 +133,3 @@ export default function RootLayout() {
     </PostHogProvider>
   );
 }
-
-

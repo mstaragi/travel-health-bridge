@@ -22,6 +22,13 @@ import {
   Mail,
   AlertTriangle
 } from 'lucide-react';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+// [LOCAL UTILITY] To ensure Zero ReferenceErrors
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
 export default function ProvidersPage() {
   const [filters, setFilters] = useState<Record<string, any>>({});
@@ -96,7 +103,7 @@ export default function ProvidersPage() {
                 <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Provider Name</th>
                 <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">City/Area</th>
                 <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Badge Status</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Freshness</th>
+                <th className="px-6 py-4 text-[10px) font-black uppercase tracking-widest text-slate-400">Freshness</th>
                 <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">Strikes</th>
                 <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">Actions</th>
               </tr>

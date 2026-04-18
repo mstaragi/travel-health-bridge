@@ -4,10 +4,10 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "start": "expo start",
+    "start": "set EXPO_ROUTER_APP_ROOT=c-app && expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "set EXPO_ROUTER_APP_ROOT=c-app && expo start --web"
   },
   "dependencies": {
     "@expo/metro-runtime": "~3.2.3",

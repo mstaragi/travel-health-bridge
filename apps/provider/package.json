@@ -4,8 +4,8 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "start": "expo start --web",
-    "web": "expo start --web",
+    "start": "set EXPO_ROUTER_APP_ROOT=p-app && expo start --web",
+    "web": "set EXPO_ROUTER_APP_ROOT=p-app && expo start --web",
     "build": "expo export -p web",
     "build:vercel": "expo export -p web --output-dir dist"
   },

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Travel Health Bridge",
-    "slug": "travel-health-bridge",
+    "name": "THB Consumer",
+    "slug": "thb-consumer",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -62,7 +62,8 @@
       ]
     ],
     "experiments": {
-      "typedRoutes": true
+      "typedRoutes": true,
+      "appDir": "c-app"
     }
   }
 }

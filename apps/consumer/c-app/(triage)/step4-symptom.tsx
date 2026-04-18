@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Platform, FlatList } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTriageStore } from 'store/triageStore';

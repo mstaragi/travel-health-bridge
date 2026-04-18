@@ -1,10 +1,12 @@
-import React, { useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
+import React, { useRef, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform, SafeAreaView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { palette, typography, spacing, borderRadius } from '@travelhealthbridge/shared/ui/tokens';
 import { Button } from '@travelhealthbridge/shared/ui/Button';
 import { track } from '@travelhealthbridge/shared';
 import { useTriageStore } from 'store/triageStore';
+import { LANGUAGES } from '@travelhealthbridge/shared/constants';
+import { Check, Globe } from 'lucide-react-native';
 
 export default function Step3Language() {
   const { languages, setLanguages } = useTriageStore();
