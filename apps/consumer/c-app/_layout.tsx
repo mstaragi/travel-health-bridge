@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Slot, useRouter, useSegments, useLocalSearchParams, Redirect, usePathname } from 'expo-router';
+import { Slot, useRouter, useSegments, useLocalSearchParams, usePathname } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useAuthStore } from 'store/authStore';
 import { View, ActivityIndicator, Platform } from 'react-native';
@@ -20,9 +20,6 @@ if (Platform.OS !== 'web') {
   }
 }
 
-import { Stack } from 'expo-router';
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
 import { ThemeProvider } from '@travelhealthbridge/shared/ui/useTheme';
 
 const STORAGE = {
@@ -42,11 +39,8 @@ const STORAGE = {
 };
 
 export default function RootLayout() {
-  const { isLoading, hasSeenOnboarding, session, isGuest, initialize } = useAuthStore();
+  const { isLoading, initialize } = useAuthStore();
   const [showConsent, setShowConsent] = useState(false);
-  const segments = useSegments();
-  const pathname = usePathname();
-  const router = useRouter();
   const params = useLocalSearchParams();
 
   useEffect(() => {
@@ -73,8 +67,7 @@ export default function RootLayout() {
   useEffect(() => {
     if (!isLoading) {
       track('app_opened', { 
-        source: params.utm_source || 'organic',
-        is_guest: isGuest
+        source: params.utm_source || 'organic'
       });
     }
   }, [isLoading]);
@@ -84,29 +77,6 @@ export default function RootLayout() {
     setShowConsent(false);
   };
 
-  // [ABSOLUTE PATH GATING] 
-  // Use window.location.pathname directly for 100% accuracy, bypassing router segment lag.
-  const currentUrlPath = typeof window !== 'undefined' ? window.location.pathname : pathname;
-  
-  // [WHITELIST-ONLY PROTECTION]
-  const protectedPaths = ['profile', 'vault', 'visits', 'settings'];
-  const isProtectedPath = protectedPaths.some(p => currentUrlPath.toLowerCase().includes(p));
-
-  // [DEFINITIVE PUBLIC TRIAGE BYPASS]
-  // This is the CRITICAL SYNC OVERRIDE. If we are in the triage flow, we PHYSICALLY SKIP all auth gating.
-  const isPublicAssessment = 
-    currentUrlPath.includes('step') || 
-    currentUrlPath.includes('triage') || 
-    currentUrlPath.includes('result') || 
-    currentUrlPath === '/' || 
-    currentUrlPath === '';
-
-  const shouldRedirectToAuth = isProtectedPath && !isPublicAssessment && !session && !isGuest;
-
-  if (__DEV__) {
-    console.log(`[ROUTING-SHIELD] Path: "${currentUrlPath}" | Public Assessment: ${isPublicAssessment} | Should Gate: ${shouldRedirectToAuth}`);
-  }
-
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: palette.navy[900] }}>
@@ -115,15 +85,8 @@ export default function RootLayout() {
     );
   }
 
-  // [HARDENED AUTH GATE]
-  if (shouldRedirectToAuth) {
-    return <Redirect href="/auth/phone" />;
-  }
-
-  // [AUTH BYPASS] Don't linger on auth screens if signed in
-  if ((session || isGuest) && currentUrlPath.includes('/auth/')) {
-    return <Redirect href="/" />;
-  }
+  // NOTE: Authentication gating has been moved to segment-specific layouts (e.g., (tabs)/_layout.tsx)
+  // to ensure the Root Triage flow remains publicly accessible at all times.
 
   return (
     <PostHogProvider client={posthog}>
