@@ -29,10 +29,13 @@ export async function middleware(request: NextRequest) {
   );
 
   // 3. Get session from cookies
-  // Note: Standard supabase-js requires significant boilerplate for Next.js 14 cookies
-  // We'll use a simplified check for v1, assuming auth.getUser() handles validation.
   const token = request.cookies.get('sb-access-token')?.value;
   
+  // --- DEVELOPER BYPASS (LOCAL ONLY) ---
+  if (token === 'DEBUG_BYPASS_TOKEN' && (process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'development')) {
+    return NextResponse.next();
+  }
+
   if (!token) {
     return NextResponse.redirect(new URL('/login', request.url));
   }

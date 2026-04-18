@@ -6,8 +6,15 @@ const workspaceRoot = path.resolve(projectRoot, '../..');
 
 const config = getDefaultConfig(projectRoot);
 
-// 1. Watch all files within the monorepo
-config.watchFolders = [workspaceRoot];
+// 1. WATCH FOLDERS LOCKDOWN: Explicitly only watch what is needed
+// This physically prevents Metro from "discovering" files in apps/consumer
+config.watchFolders = [
+  projectRoot,
+  path.resolve(workspaceRoot, 'packages/shared'),
+  path.resolve(workspaceRoot, 'node_modules'),
+];
+
+const exclusionList = require('metro-config/src/defaults/exclusionList');
 
 // 2. Let Metro know where to resolve packages and in what order
 config.resolver.nodeModulesPaths = [
@@ -15,8 +22,22 @@ config.resolver.nodeModulesPaths = [
   path.resolve(workspaceRoot, 'node_modules'),
 ];
 
+// Block the consumer app folder to prevent cross-app leakage/discovery
+// Using both literal patterns and absolute path resolution for 100% Windows safety
+config.resolver.blockList = exclusionList([
+  /.*[/\\]apps[/\\]consumer[/\\]/,
+  new RegExp(path.resolve(workspaceRoot, 'apps/consumer').replace(/\\/g, '\\\\') + '.*'),
+]);
+
 // Shim better-sqlite3 and native modules for Web builds
 config.resolver.resolveRequest = (context, moduleName, platform) => {
+  // 1. ABSOLUTE ISOLATION: Explicitly block any resolution into the consumer app
+  // This is a surgical guard that prevents "cross-app leakage"
+  if (moduleName.includes('apps/consumer') || moduleName.startsWith('../consumer')) {
+    throw new Error(`Boundary Breach: Provider app attempted to load ${moduleName}`);
+  }
+
+  // 2. Existing shims
   if (platform === 'web' && (moduleName === 'better-sqlite3' || moduleName === 'expo-secure-store')) {
     return {
       type: 'sourceFile',

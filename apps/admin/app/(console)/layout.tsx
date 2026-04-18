@@ -15,8 +15,7 @@ import {
   PlusCircle,
   Activity
 } from 'lucide-react';
-import { DailySummaryCard } from '@travelhealthbridge/shared/ui/DailySummaryCard.web';
-import { QuickCaseModal } from '@travelhealthbridge/shared/ui/QuickCaseModal.web';
+import { DailySummaryCard, QuickCaseModal } from '@travelhealthbridge/shared/ui';
 import { useAdminDailySummary } from '@travelhealthbridge/shared/api/supabase';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -25,7 +24,7 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export default function DashboardLayout({
+export default function ConsoleLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -36,11 +35,11 @@ export default function DashboardLayout({
 
   const navItems = [
     { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'Providers', href: '/dashboard/providers', icon: Stethoscope },
-    { name: 'Overcharge Queue', href: '/dashboard/overcharges', icon: ShieldAlert },
-    { name: 'Review Intel', href: '/dashboard/reviews', icon: AlertCircle },
-    { name: 'Sessions', href: '/dashboard/sessions', icon: History },
-    { name: 'Advisories', href: '/dashboard/advisories', icon: Bell },
+    { name: 'Providers', href: '/providers', icon: Stethoscope },
+    { name: 'Overcharge Queue', href: '/overcharges', icon: ShieldAlert },
+    { name: 'Review Intel', href: '/reviews', icon: AlertCircle },
+    { name: 'Sessions', href: '/sessions', icon: History },
+    { name: 'Advisories', href: '/advisories', icon: Bell },
   ];
 
   return (
@@ -61,7 +60,7 @@ export default function DashboardLayout({
 
         <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
             return (
               <Link 
                 key={item.href}
@@ -93,7 +92,7 @@ export default function DashboardLayout({
           </button>
           
           <Link 
-            href="/dashboard/settings" 
+            href="/settings" 
             className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 hover:text-slate-300 transition-colors"
           >
             <Settings className="w-5 h-5" />

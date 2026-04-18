@@ -5,5 +5,5 @@ import { Redirect } from 'expo-router';
  * In production, this redirects to /(dashboard).
  */
 export default function IndexScreen() {
-  return <Redirect href="/gallery" />;
+  return <Redirect href="/(dashboard)" />;
 }

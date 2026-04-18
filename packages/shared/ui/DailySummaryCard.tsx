@@ -22,6 +22,7 @@ interface DailySummaryCardProps {
   isLoading?: boolean;
   onRefresh?: () => void;
   style?: ViewStyle;
+  className?: string; // Standardized for parity, ignored in native
   testID?: string;
 }
 

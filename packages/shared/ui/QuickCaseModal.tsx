@@ -11,10 +11,13 @@ import { WHATSAPP_CASE_CATEGORIES } from '../constants';
 import { useTheme } from './useTheme';
 import { typography, spacing, borderRadius, palette } from './tokens';
 
+type CaseSeverity = 'P1' | 'P2' | 'P3' | 'P4';
+
 interface QuickCaseModalProps {
-  onSubmit: (minimalCase: Partial<WhatsappCase>) => Promise<void>;
-  onCancel: () => void;
-  currentUser?: string;
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (data: Partial<WhatsappCase>) => void | Promise<void>;
+  isLoading?: boolean;
   style?: ViewStyle;
   testID?: string;
 }
@@ -37,9 +40,10 @@ const SEVERITY_OPTIONS: { value: CaseSeverity; label: string; color: string; bg:
 ];
 
 export function QuickCaseModal({
+  isOpen,
+  onClose,
   onSubmit,
-  onCancel,
-  currentUser,
+  isLoading = false,
   style,
   testID,
 }: QuickCaseModalProps) {
@@ -47,8 +51,9 @@ export function QuickCaseModal({
   const [severity, setSeverity] = useState<CaseSeverity | null>(null);
   const [category, setCategory] = useState<string | null>(null);
   const [notes, setNotes] = useState('');
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  if (!isOpen) return null;
 
   const canSubmit = severity !== null && category !== null;
 
@@ -57,7 +62,6 @@ export function QuickCaseModal({
       setError('Select severity and category to continue.');
       return;
     }
-    setLoading(true);
     setError('');
     try {
       const minimalCase: Partial<WhatsappCase> = {
@@ -65,14 +69,13 @@ export function QuickCaseModal({
         severity: severity!,
         category: category!,
         status: 'Open',
-        owner: currentUser ?? 'ops',
+        owner: 'ops',
         opened_at: new Date().toISOString(),
         notes: notes.trim() || undefined,
       };
       await onSubmit(minimalCase);
     } catch (e) {
       setError('Failed to log case. Try again.');
-      setLoading(false);
     }
   };
 
@@ -224,7 +227,7 @@ export function QuickCaseModal({
       {/* Actions */}
       <View style={{ flexDirection: 'row', gap: spacing.sm }}>
         <TouchableOpacity
-          onPress={onCancel}
+          onPress={onClose}
           style={{
             flex: 1,
             paddingVertical: spacing.md,
@@ -239,12 +242,12 @@ export function QuickCaseModal({
 
         <TouchableOpacity
           onPress={handleSubmit}
-          disabled={!canSubmit || loading}
+          disabled={!canSubmit || isLoading}
           style={{
             flex: 2,
             paddingVertical: spacing.md,
             borderRadius: borderRadius.md,
-            backgroundColor: canSubmit && !loading ? theme.primary : theme.buttonDisabled,
+            backgroundColor: canSubmit && !isLoading ? theme.primary : theme.buttonDisabled,
             alignItems: 'center',
           }}
         >
@@ -252,10 +255,10 @@ export function QuickCaseModal({
             style={{
               fontSize: typography.fontSize.base,
               fontWeight: typography.fontWeight.bold,
-              color: canSubmit && !loading ? '#FFFFFF' : theme.buttonDisabledText,
+              color: canSubmit && !isLoading ? '#FFFFFF' : theme.buttonDisabledText,
             }}
           >
-            {loading ? 'Logging...' : 'Log Case'}
+            {isLoading ? 'Logging...' : 'Log Case'}
           </Text>
         </TouchableOpacity>
       </View>

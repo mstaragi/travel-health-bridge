@@ -13,7 +13,7 @@ import React from 'react';
 import { Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import { ThemeProvider } from '../packages/shared/ui/useTheme';
+import { ThemeProvider } from '@travelhealthbridge/shared/ui/useTheme';
 import { Platform } from 'react-native';
 
 const STORAGE = {

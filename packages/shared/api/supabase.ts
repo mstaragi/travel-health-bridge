@@ -7,7 +7,10 @@
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Platform } from 'react-native';
+// Simple platform detection that doesn't rely on 'react-native' to prevent bundling leaks in Next.js
+const Platform = {
+  OS: typeof window === 'undefined' && typeof process !== 'undefined' && process.versions?.node ? 'web' : (typeof window !== 'undefined' ? 'web' : 'ios'), // Default to ios for native stubbing if needed
+};
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://mock-ur.supabase.co';
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'mock-anon-key';
