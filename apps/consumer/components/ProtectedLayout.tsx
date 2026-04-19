@@ -16,7 +16,13 @@ export default function ProtectedLayout() {
     );
   }
 
-  // If not authenticated and not a guest, redirect to phone auth
+  // 1. SURGICAL BYPASS: Allow public access to the root and triage flow
+  if (pathname === '/' || pathname.includes('(triage)') || pathname.includes('step')) {
+    if (__DEV__) console.log(`[AUTH-BYPASS] Allowing public access to segment: "${pathname}"`);
+    return <Slot />;
+  }
+
+  // 2. AUTH GATE: If not authenticated and not a guest, redirect to phone auth
   if (!session && !isGuest) {
     if (__DEV__) {
       console.log(`[AUTH-GATE] Protecting segment at "${pathname}". Redirecting to /auth/phone`);

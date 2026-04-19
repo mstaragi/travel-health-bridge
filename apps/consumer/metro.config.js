@@ -17,10 +17,10 @@ config.watchFolders = [
   path.resolve(workspaceRoot, 'node_modules'),
 ];
 
-// CACHE ISOLATION
+// CACHE ISOLATION: Unique physical folder to prevent Windows process crosstalk
 config.cacheStores = [
   new FileStore({
-    root: path.join(projectRoot, 'node_modules', '.cache', 'metro'),
+    root: path.join(projectRoot, 'node_modules', '.cache', 'metro-consumer'),
   }),
 ];
 
@@ -38,7 +38,7 @@ config.resolver.nodeModulesPaths = [
 // Block the provider app folder to prevent cross-app leakage/discovery
 config.resolver.resolveRequest = (context, moduleName, platform) => {
   // 1. ABSOLUTE ISOLATION: Explicitly block any resolution into the provider app
-  if (moduleName.includes('apps/provider') || moduleName.startsWith('../provider')) {
+  if (moduleName.includes('apps/provider/app') || moduleName.includes('apps/provider/package.json')) {
     throw new Error(`Boundary Breach: Consumer app attempted to load ${moduleName}`);
   }
 

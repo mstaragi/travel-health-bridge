@@ -17,10 +17,10 @@ config.watchFolders = [
   path.resolve(workspaceRoot, 'node_modules'),
 ];
 
-// 2. CACHE ISOLATION: Unique cache for this app only
+// 2. CACHE ISOLATION: Unique cache for this app only (Windows Cross-App Shield)
 config.cacheStores = [
   new FileStore({
-    root: path.join(projectRoot, 'node_modules', '.cache', 'metro'),
+    root: path.join(projectRoot, 'node_modules', '.cache', 'metro-provider'),
   }),
 ];
 
@@ -44,7 +44,7 @@ config.resolver.blockList = exclusionList([
 config.resolver.resolveRequest = (context, moduleName, platform) => {
   // 1. ABSOLUTE ISOLATION: Explicitly block any resolution into the consumer app
   // This is a surgical guard that prevents "cross-app leakage"
-  if (moduleName.includes('apps/consumer') || moduleName.startsWith('../consumer')) {
+  if (moduleName.includes('apps/consumer/app') || moduleName.includes('apps/consumer/package.json')) {
     throw new Error(`Boundary Breach: Provider app attempted to load ${moduleName}`);
   }
 
@@ -55,23 +55,13 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
       filePath: path.resolve(__dirname, 'dummy.js'),
     };
   }
-  // 3. SERVER ISOLATION: Unique internal port to prevent socket conflicts
-config.server = {
-  port: 8083,
-};
 
-// 3. SERVER ISOLATION: Unique internal port to prevent socket conflicts
-config.server = {
-  port: 8083,
-};
-
-// 3. SERVER ISOLATION: Unique internal port to prevent socket conflicts
-config.server = {
-  port: 8083,
-};
-
-// Chain to the default resolver
+  // Chain to the default resolver
   return context.resolveRequest(context, moduleName, platform);
+};
+
+config.server = {
+  port: 8083,
 };
 
 module.exports = config;

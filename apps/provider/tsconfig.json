@@ -1,11 +1,15 @@
-﻿{
+{
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
     "paths": {
       "@travelhealthbridge/shared": [
         "../../packages/shared/index.ts"
-      ]
+      ],
+      "store": ["./app/store"],
+      "store/*": ["./app/store/*"],
+      "lib": ["./app/lib"],
+      "lib/*": ["./app/lib/*"]
     }
   },
   "include": [

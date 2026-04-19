@@ -44,7 +44,8 @@ export default function OnboardingScreen() {
       setGuestMode(true);
       router.replace('/');
     } else {
-      router.replace('/auth/phone');
+      // Default to triage root, allowing user to sign in later if they wish
+      router.replace('/');
     }
   };
 

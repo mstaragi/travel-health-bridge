@@ -63,7 +63,7 @@
     ],
     "experiments": {
       "typedRoutes": true,
-      "appDir": "c-app"
+      "appDir": "./c-app"
     }
   }
 }

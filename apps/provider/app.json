@@ -21,7 +21,7 @@
     ],
     "experiments": {
       "typedRoutes": true,
-      "appDir": "p-app"
+      "appDir": "./p-app"
     }
   }
 }
