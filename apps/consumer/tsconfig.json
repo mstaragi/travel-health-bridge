@@ -12,8 +12,8 @@
       "db/*": ["./db/*"],
       "lib": ["./lib"],
       "lib/*": ["./lib/*"],
-      "store": ["./app/store"],
-      "store/*": ["./app/store/*"]
+      "store": ["./c-app/store"],
+      "store/*": ["./c-app/store/*"]
     }
   },
   "include": [

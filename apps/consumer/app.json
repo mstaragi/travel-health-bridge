@@ -43,7 +43,12 @@
       ]
     },
     "plugins": [
-      "expo-router",
+      [
+        "expo-router",
+        {
+          "root": "./c-app"
+        }
+      ],
       "expo-secure-store",
       "expo-location",
       [
@@ -62,8 +67,7 @@
       ]
     ],
     "experiments": {
-      "typedRoutes": true,
-      "appDir": "./c-app"
+      "typedRoutes": true
     }
   }
 }

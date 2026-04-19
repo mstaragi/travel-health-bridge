@@ -10,7 +10,12 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-router",
+      [
+        "expo-router",
+        {
+          "root": "./p-app"
+        }
+      ],
       [
         "sentry-expo",
         {
@@ -20,8 +25,7 @@
       ]
     ],
     "experiments": {
-      "typedRoutes": true,
-      "appDir": "./p-app"
+      "typedRoutes": true
     }
   }
 }

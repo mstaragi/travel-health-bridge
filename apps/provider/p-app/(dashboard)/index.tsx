@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, TextInput, Switch } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { supabase } from '@travelhealthbridge/shared';
@@ -99,7 +99,11 @@ export default function ProviderDashboardScreen() {
                     <Text style={styles.patientSymptom}>{p.symptom}</Text>
                     <Text style={styles.patientEta}>Arriving in ~{p.etaMinutes} mins</Text>
                  </View>
-                 <TouchableOpacity style={styles.arrivedBtn} onPress={() => markArrived(p.id)}>
+                 <TouchableOpacity 
+                    activeOpacity={0.7}
+                    style={styles.arrivedBtn} 
+                    onPress={() => markArrived(p.id)}
+                  >
                     <Text style={styles.arrivedBtnText}>Patient Arrived</Text>
                  </TouchableOpacity>
               </View>
@@ -126,6 +130,7 @@ export default function ProviderDashboardScreen() {
                  multiline
                  numberOfLines={4}
                  placeholder="Enter clinical findings..."
+                 placeholderTextColor={palette.gray[500]}
                  value={diagnosis}
                  onChangeText={setDiagnosis}
                />
@@ -136,6 +141,7 @@ export default function ProviderDashboardScreen() {
                <TextInput 
                  style={styles.input}
                  placeholder="e.g. 1200"
+                 placeholderTextColor={palette.gray[500]}
                  keyboardType="numeric"
                  value={fees}
                  onChangeText={setFees}
@@ -144,7 +150,7 @@ export default function ProviderDashboardScreen() {
 
             <View style={styles.formGroup}>
                <Text style={styles.formLabel}>Upload Medical Documents</Text>
-               <TouchableOpacity style={styles.uploadBtn}>
+               <TouchableOpacity activeOpacity={0.6} style={styles.uploadBtn}>
                   <Text style={styles.uploadText}>+ Add Files (Prescription, Receipt...)</Text>
                </TouchableOpacity>
             </View>
@@ -156,7 +162,11 @@ export default function ProviderDashboardScreen() {
                style={styles.completeBtn}
             />
             
-            <TouchableOpacity onPress={() => setActivePatient(null)} style={styles.cancelBtn}>
+            <TouchableOpacity 
+              activeOpacity={0.5}
+              onPress={() => setActivePatient(null)} 
+              style={styles.cancelBtn}
+            >
                <Text style={styles.cancelBtnText}>Discard Finalization</Text>
             </TouchableOpacity>
           </View>

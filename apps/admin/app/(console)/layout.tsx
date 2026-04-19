@@ -66,12 +66,18 @@ export default function ConsoleLayout({
                 key={item.href}
                 href={item.href} 
                 className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group",
+                  "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative overflow-hidden",
+                  "active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-teal-500 outline-none",
                   isActive 
                     ? "bg-teal-500/10 text-teal-400 font-bold border border-teal-500/20 shadow-[0_0_20px_rgba(20,184,166,0.05)]" 
-                    : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200"
+                    : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 border border-transparent hover:border-slate-700/50"
                 )}
               >
+                {/* Active Indicator Bar */}
+                {isActive && (
+                  <div className="absolute left-0 top-3 bottom-3 w-1 bg-teal-500 rounded-r-full shadow-[0_0_10px_rgba(20,184,166,0.5)]" />
+                )}
+                
                 <item.icon className={cn(
                   "w-5 h-5 transition-colors",
                   isActive ? "text-teal-400" : "text-slate-500 group-hover:text-slate-300"

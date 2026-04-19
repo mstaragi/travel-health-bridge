@@ -4,8 +4,8 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "start": "npx cross-env EXPO_ROUTER_APP_ROOT=./p-app expo start --web",
-    "web": "npx cross-env EXPO_ROUTER_APP_ROOT=./p-app expo start --web",
+    "start": "npx cross-env EXPO_ROUTER_APP_ROOT=./p-app expo start --web -c",
+    "web": "npx cross-env EXPO_ROUTER_APP_ROOT=./p-app expo start --web -c",
     "build": "npx cross-env EXPO_ROUTER_APP_ROOT=./p-app expo export -p web",
     "build:vercel": "npx cross-env EXPO_ROUTER_APP_ROOT=./p-app expo export -p web --output-dir dist"
   },

@@ -6,10 +6,10 @@
       "@travelhealthbridge/shared": [
         "../../packages/shared/index.ts"
       ],
-      "store": ["./app/store"],
-      "store/*": ["./app/store/*"],
-      "lib": ["./app/lib"],
-      "lib/*": ["./app/lib/*"]
+      "store": ["./p-app/store"],
+      "store/*": ["./p-app/store/*"],
+      "lib": ["./p-app/lib"],
+      "lib/*": ["./p-app/lib/*"]
     }
   },
   "include": [

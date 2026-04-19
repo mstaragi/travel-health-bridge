@@ -44,7 +44,7 @@ config.resolver.blockList = exclusionList([
 config.resolver.resolveRequest = (context, moduleName, platform) => {
   // 1. ABSOLUTE ISOLATION: Explicitly block any resolution into the consumer app
   // This is a surgical guard that prevents "cross-app leakage"
-  if (moduleName.includes('apps/consumer/app') || moduleName.includes('apps/consumer/package.json')) {
+  if (moduleName.includes('apps/consumer/c-app') || moduleName.includes('apps/consumer/package.json')) {
     throw new Error(`Boundary Breach: Provider app attempted to load ${moduleName}`);
   }
 

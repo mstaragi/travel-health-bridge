@@ -38,7 +38,7 @@ config.resolver.nodeModulesPaths = [
 // Block the provider app folder to prevent cross-app leakage/discovery
 config.resolver.resolveRequest = (context, moduleName, platform) => {
   // 1. ABSOLUTE ISOLATION: Explicitly block any resolution into the provider app
-  if (moduleName.includes('apps/provider/app') || moduleName.includes('apps/provider/package.json')) {
+  if (moduleName.includes('apps/provider/p-app') || moduleName.includes('apps/provider/package.json')) {
     throw new Error(`Boundary Breach: Consumer app attempted to load ${moduleName}`);
   }
 

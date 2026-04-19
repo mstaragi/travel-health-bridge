@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { Redirect, Slot, usePathname } from 'expo-router';
-import { useAuthStore } from '../store/authStore';
+import { useAuthStore } from 'store/authStore';
 import { View, ActivityIndicator } from 'react-native';
 import { palette } from '@travelhealthbridge/shared/ui/tokens';
 
-export default function ProtectedLayout() {
+export default function ProtectedLayout({ children }: { children?: React.ReactNode }) {
   const { session, isGuest, isLoading } = useAuthStore();
   const pathname = usePathname();
 
@@ -19,7 +19,7 @@ export default function ProtectedLayout() {
   // 1. SURGICAL BYPASS: Allow public access to the root and triage flow
   if (pathname === '/' || pathname.includes('(triage)') || pathname.includes('step')) {
     if (__DEV__) console.log(`[AUTH-BYPASS] Allowing public access to segment: "${pathname}"`);
-    return <Slot />;
+    return children || <Slot />;
   }
 
   // 2. AUTH GATE: If not authenticated and not a guest, redirect to phone auth
@@ -30,5 +30,5 @@ export default function ProtectedLayout() {
     return <Redirect href="/auth/phone" />;
   }
 
-  return <Slot />;
+  return children || <Slot />;
 }

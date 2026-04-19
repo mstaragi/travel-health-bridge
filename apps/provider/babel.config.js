@@ -5,6 +5,17 @@ module.exports = function (api) {
     plugins: [
       ['@babel/plugin-proposal-decorators', { legacy: true }],
       ['@babel/plugin-proposal-class-properties', { loose: true }],
+      [
+        'module-resolver',
+        {
+          root: ['./'],
+          alias: {
+            'db': './db',
+            'lib': './lib',
+            'store': './p-app/store',
+          },
+        },
+      ],
       'react-native-reanimated/plugin',
     ],
   };

@@ -12,7 +12,7 @@ module.exports = function (api) {
           alias: {
             'db': './db',
             'lib': './lib',
-            'store': './app/store',
+            'store': './c-app/store',
           },
         },
       ],

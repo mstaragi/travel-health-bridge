@@ -4,10 +4,10 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "start": "npx cross-env EXPO_ROUTER_APP_ROOT=./c-app expo start",
-    "android": "npx cross-env EXPO_ROUTER_APP_ROOT=./c-app expo start --android",
-    "ios": "npx cross-env EXPO_ROUTER_APP_ROOT=./c-app expo start --ios",
-    "web": "npx cross-env EXPO_ROUTER_APP_ROOT=./c-app expo start --web"
+    "start": "npx cross-env EXPO_ROUTER_APP_ROOT=./c-app expo start -c",
+    "android": "npx cross-env EXPO_ROUTER_APP_ROOT=./c-app expo start --android -c",
+    "ios": "npx cross-env EXPO_ROUTER_APP_ROOT=./c-app expo start --ios -c",
+    "web": "npx cross-env EXPO_ROUTER_APP_ROOT=./c-app expo start --web -c"
   },
   "dependencies": {
     "@expo/metro-runtime": "~3.2.3",
