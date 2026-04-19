@@ -86,7 +86,7 @@ export default function ResultScreen() {
       const elapsed = Date.now() - startTime;
       if (elapsed >= 120000) { // 2 minutes
         track('provider_no_answer_reported', {
-          provider_id: ranked[0]?.id,
+          provider_id: primary?.id,
           time_to_failure_seconds: 120
         });
         setShowFailure(true);
@@ -95,8 +95,8 @@ export default function ResultScreen() {
     }, 5000);
 
     // Track if any providers are stale
-    ranked.forEach((p: any) => {
-      if (p.last_activity_at && (Date.now() - new Date(p.last_activity_at).getTime() > 14 * 24 * 60 * 60 * 1000)) {
+    [primary, secondary].forEach((p: any) => {
+      if (p?.last_activity_at && (Date.now() - new Date(p.last_activity_at).getTime() > 14 * 24 * 60 * 60 * 1000)) {
         track('stale_provider_label_shown', { provider_id: p.id });
       }
     });
