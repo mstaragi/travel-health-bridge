@@ -59,18 +59,18 @@ const SCORE = {
  * Excludes providers with badge_status = 'suspended'.
  */
 export function rankProviders({
-  providers,
-  userLanguages,
-  urgency,
-  budget,
+  providers = [],
+  userLanguages = [],
+  urgency = 'can_wait',
+  budget = 1000,
   lat,
   lng,
   symptom,
-  symptomToSpecialty,
-  availabilityStatuses,
+  symptomToSpecialty = {},
+  availabilityStatuses = {},
   currentTime,
 }: RankInput): RankProvidersResult {
-  const normalizedUserLangs = userLanguages.map((l) => l.toLowerCase());
+  const normalizedUserLangs = (userLanguages || []).map((l) => l.toLowerCase());
   const hasLanguagePreference = normalizedUserLangs.length > 0;
 
   // ── Step 1: Hard exclusions ───────────────────────────────

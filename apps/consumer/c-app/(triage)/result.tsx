@@ -11,39 +11,36 @@ import Modal from 'react-native-modal';
 import { track } from '@travelhealthbridge/shared';
 
 // Mock data for ranking verification until real DB is active
-const MOCK_DATA = [
+const MOCK_DATA: any[] = [
   {
     id: 'p1',
     name: 'Apollo Spectra Hospital',
     address: 'Koramangala 5th Block, Bengaluru',
     phone: '9100000001',
-    consultation_fee: 1200,
+    fee_opd: { min: 1200, max: 1500 },
     languages: ['English', 'Hindi', 'Kannada'],
-    is_emergency_capable: true,
-    rating: '4.9',
-    specialization: 'General Physician',
+    emergency: true,
+    reliability_score: 2,
+    specialties: ['General Physician', 'Surgery'],
+    badge_status: 'active',
+    staleness_tier: 'fresh',
+    badge_date: new Date().toISOString(),
+    opd_hours: { monday: { open: true, from: '09:00', to: '21:00' } }
   },
   {
     id: 'p2',
     name: 'Sanjeevini Medical Center',
     address: 'Indiranagar 100ft Rd, Bengaluru',
     phone: '9100000002',
-    consultation_fee: 600,
+    fee_opd: { min: 600, max: 800 },
     languages: ['English', 'Hindi'],
-    is_emergency_capable: false,
-    rating: '4.7',
-    specialization: 'Pediatrician',
-  },
-  {
-    id: 'p3',
-    name: 'Relive Urgent Care',
-    address: 'HSR Layout Sector 2, Bengaluru',
-    phone: '9100000003',
-    consultation_fee: 1500,
-    languages: ['English', 'Tamil'],
-    is_emergency_capable: true,
-    rating: '4.8',
-    specialization: 'Emergency Medicine',
+    emergency: false,
+    reliability_score: 1.5,
+    specialties: ['Pediatrics', 'General Physician'],
+    badge_status: 'active',
+    staleness_tier: 'fresh',
+    badge_date: new Date().toISOString(),
+    opd_hours: { monday: { open: true, from: '09:00', to: '18:00' } }
   }
 ];
 
@@ -61,16 +58,27 @@ export default function ResultScreen() {
 
   useEffect(() => {
     // Perform ranking
-    // In a real app, this would query the DB/API first.
-    const ranked = rankProviders(MOCK_DATA, languages, urgency || 'can_wait', budget || 'any', null, null);
-    setResults(ranked);
+    const { primary, secondary, showHelplineCTA } = rankProviders({
+      providers: MOCK_DATA as any,
+      userLanguages: languages || [],
+      urgency: urgency || 'can_wait',
+      budget: budget === 'any' ? 2000 : Number(budget) || 1000,
+      lat: undefined,
+      lng: undefined,
+      symptom,
+    });
+
+    setResults([primary, secondary].filter(Boolean));
+    if (showHelplineCTA) {
+      // In a real app we might show a different UI state here
+    }
 
     // Track result viewed
     track('triage_result_viewed', {
       city,
       symptom_category: symptom,
       urgency,
-      primary_provider_id: ranked[0]?.id,
+      primary_provider_id: primary?.id,
     });
 
     // Start 2-minute failure monitor
@@ -172,12 +180,12 @@ export default function ResultScreen() {
                   <Text style={styles.bestMatchText}>BEST MATCH</Text>
                 </View>
                 <View style={styles.priceTag}>
-                  <Text style={styles.priceText}>₹{primary.consultation_fee}</Text>
+                  <Text style={styles.priceText}>₹{primary.fee_opd?.min}</Text>
                 </View>
               </View>
 
               <Text style={styles.providerName}>{primary.name}</Text>
-              <Text style={styles.providerSpecialty}>{primary.specialization}</Text>
+              <Text style={styles.providerSpecialty}>{primary.specialties?.[0]}</Text>
               
               <View style={styles.detailList}>
                 <View style={styles.detailItem}>
@@ -217,7 +225,7 @@ export default function ResultScreen() {
                 >
                   <View style={styles.secondaryHeader}>
                     <Text style={styles.secondaryName}>{secondary.name}</Text>
-                    <Text style={styles.secondaryPrice}>₹{secondary.consultation_fee}</Text>
+                    <Text style={styles.secondaryPrice}>₹{secondary.fee_opd?.min}</Text>
                   </View>
                   <View style={styles.secondaryFooter}>
                     <View style={styles.detailItem}>
