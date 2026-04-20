@@ -170,11 +170,17 @@ export type OfflineCacheCluster = typeof OFFLINE_CACHE_CLUSTERS[number];
 export const SYMPTOM_TO_SPECIALTY: Record<string, string[]> = {
   fever: ['General Physician', 'Infectious Disease', 'Travel Medicine'],
   fever_infection: ['General Physician', 'Infectious Disease', 'Travel Medicine'],
+  stomach_pain: ['General Physician', 'Gastroenterology'],
   gi_digestive: ['General Physician', 'Gastroenterology'],
+  cough: ['General Physician', 'Respiratory Medicine', 'ENT'],
   respiratory: ['General Physician', 'Respiratory Medicine', 'ENT'],
   injury_pain: ['General Physician', 'Orthopedics'],
+  rash: ['Dermatology', 'General Physician'],
   skin_allergy: ['Dermatology', 'General Physician'],
+  chest_pain: ['Cardiology', 'Emergency Medicine'],
   cardiac_emergency: ['Cardiology', 'Emergency Medicine'],
+  headache: ['Neurology', 'General Physician'],
+  dizziness: ['Neurology', 'General Physician'],
   head_neuro: ['Neurology', 'General Physician'],
   general: ['General Physician', 'Travel Medicine'],
 };

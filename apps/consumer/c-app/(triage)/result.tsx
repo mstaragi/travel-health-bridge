@@ -2,8 +2,11 @@ import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, Platform, TouchableOpacity, Linking, Image, Animated } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTriageStore } from 'store/triageStore';
+import * as Location from 'expo-location';
+import * as Haptics from 'expo-haptics';
 import { rankProviders } from '@travelhealthbridge/shared/utils/rankProviders';
-import { HELPLINE_WHATSAPP_NUMBER, HELPLINE_OPERATING_HOURS } from '@travelhealthbridge/shared/constants';
+import { SYMPTOM_TO_SPECIALTY, HELPLINE_WHATSAPP_NUMBER } from '@travelhealthbridge/shared/constants';
+import { haversineDistance } from '@travelhealthbridge/shared/utils/distance';
 import { FailureBottomSheet } from '@travelhealthbridge/shared/ui/FailureBottomSheet';
 import { palette, typography, spacing } from '@travelhealthbridge/shared/ui/tokens';
 import { Phone, MapPin, Clock, Star, AlertCircle, ChevronRight, Navigation, X } from 'lucide-react-native';
@@ -25,7 +28,9 @@ const MOCK_DATA: any[] = [
     badge_status: 'active',
     staleness_tier: 'fresh',
     badge_date: new Date().toISOString(),
-    opd_hours: { monday: { open: true, from: '09:00', to: '21:00' } }
+    opd_hours: { monday: { open: true, from: '09:00', to: '21:00' } },
+    lat: 12.9348,
+    lng: 77.6189
   },
   {
     id: 'p2',
@@ -40,7 +45,9 @@ const MOCK_DATA: any[] = [
     badge_status: 'active',
     staleness_tier: 'fresh',
     badge_date: new Date().toISOString(),
-    opd_hours: { monday: { open: true, from: '09:00', to: '18:00' } }
+    opd_hours: { monday: { open: true, from: '09:00', to: '18:00' } },
+    lat: 12.9716,
+    lng: 77.6412
   }
 ];
 
@@ -56,6 +63,21 @@ export default function ResultScreen() {
   const [showSoftPrompt, setShowSoftPrompt] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
+  const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') return;
+      
+      let loc = await Location.getCurrentPositionAsync({});
+      setUserLocation({
+        lat: loc.coords.latitude,
+        lng: loc.coords.longitude
+      });
+    })();
+  }, []);
+
   useEffect(() => {
     // Perform ranking
     const { primary, secondary, showHelplineCTA } = rankProviders({
@@ -63,9 +85,10 @@ export default function ResultScreen() {
       userLanguages: languages || [],
       urgency: urgency || 'can_wait',
       budget: budget === 'any' ? 2000 : Number(budget) || 1000,
-      lat: undefined,
-      lng: undefined,
-      symptom,
+      lat: userLocation?.lat,
+      lng: userLocation?.lng,
+      symptom: symptom || undefined,
+      symptomToSpecialty: SYMPTOM_TO_SPECIALTY,
     });
 
     setResults([primary, secondary].filter(Boolean));
@@ -79,6 +102,7 @@ export default function ResultScreen() {
       symptom_category: symptom,
       urgency,
       primary_provider_id: primary?.id,
+      has_location: !!userLocation,
     });
 
     // Start 2-minute failure monitor
@@ -125,6 +149,7 @@ export default function ResultScreen() {
       provider_name: provider.name,
       rank: rank
     });
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     setCallNowTappedAt(Date.now());
     Linking.openURL(`tel:${provider.phone}`);
   };
@@ -135,16 +160,32 @@ export default function ResultScreen() {
       provider_name: provider.name,
       rank: rank
     });
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    const lat = provider.lat;
+    const lng = provider.lng;
+    const label = encodeURIComponent(provider.name);
+
     const url = Platform.select({
-      ios: `maps:0,0?q=${provider.name}@${provider.address}`,
-      android: `geo:0,0?q=${provider.address}(${provider.name})`
+      ios: `maps:0,0?q=${label}@${lat},${lng}`,
+      android: `geo:0,0?q=${lat},${lng}(${label})`
     });
-    if (url) Linking.openURL(url);
+
+    // Alternatively, use google maps specifically if available
+    const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+
+    Linking.canOpenURL(url || '').then(supported => {
+      if (supported) {
+        Linking.openURL(url || '');
+      } else {
+        Linking.openURL(googleMapsUrl);
+      }
+    });
   };
 
   const handleHelpline = (context: string) => {
     track('helpline_cta_tapped', { context });
-    Linking.openURL(`tel:${HELPLINE_NUMBER}`);
+    Linking.openURL(`tel:${HELPLINE_WHATSAPP_NUMBER}`);
   };
 
   const primary = results[0];
@@ -190,7 +231,9 @@ export default function ResultScreen() {
               <View style={styles.detailList}>
                 <View style={styles.detailItem}>
                   <MapPin size={16} color={palette.navy[300]} />
-                  <Text style={styles.detailText} numberOfLines={1}>{primary.address}</Text>
+                  <Text style={styles.detailText} numberOfLines={1}>
+                    {primary.address} • {userLocation ? `${haversineDistance(userLocation.lat, userLocation.lng, primary.lat, primary.lng).toFixed(1)} km away` : 'Calculating distance...'}
+                  </Text>
                 </View>
                 <View style={styles.detailItem}>
                   <Clock size={16} color={palette.navy[300]} />
@@ -230,7 +273,9 @@ export default function ResultScreen() {
                   <View style={styles.secondaryFooter}>
                     <View style={styles.detailItem}>
                       <MapPin size={14} color={palette.navy[200]} />
-                      <Text style={styles.secondaryDetail} numberOfLines={1}>{secondary.address}</Text>
+                      <Text style={styles.secondaryDetail} numberOfLines={1}>
+                        {secondary.address} • {userLocation ? `${haversineDistance(userLocation.lat, userLocation.lng, secondary.lat, secondary.lng).toFixed(1)} km away` : ''}
+                      </Text>
                     </View>
                     <ChevronRight size={18} color={palette.navy[100]} />
                   </View>

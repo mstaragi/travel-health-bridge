@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Platform, FlatL
 import { useRouter } from 'expo-router';
 import { useTriageStore } from 'store/triageStore';
 import { palette, typography, spacing } from '@travelhealthbridge/shared/ui/tokens';
+import * as Haptics from 'expo-haptics';
 import { track } from '@travelhealthbridge/shared';
 
 const SYMPTOMS = [
@@ -23,6 +24,7 @@ export default function Step4Symptom() {
 
   const handleSelect = (symptomId: string) => {
     setSymptom(symptomId);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     // Auto-advance
     setTimeout(() => {
       router.push('/(triage)/step5-budget');

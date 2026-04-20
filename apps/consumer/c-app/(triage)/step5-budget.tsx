@@ -8,6 +8,7 @@ import { Button } from '@travelhealthbridge/shared/ui/Button';
 import { Input } from '@travelhealthbridge/shared/ui/Input';
 import { palette, typography, spacing } from '@travelhealthbridge/shared/ui/tokens';
 import { Banknote, MessageCircle, Search } from 'lucide-react-native';
+import * as Haptics from 'expo-haptics';
 import { track } from '@travelhealthbridge/shared';
 
 const BUDGET_OPTIONS = [
@@ -42,6 +43,7 @@ export default function Step5Budget() {
       value: budget,
       time_on_step_seconds: timeOnStep
     });
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
     try {
       const state = await NetInfo.fetch();
@@ -96,7 +98,10 @@ export default function Step5Budget() {
                         styles.chip,
                         budget === opt.value.toString() && styles.chipActive
                       ]}
-                      onPress={() => setBudget(opt.value.toString())}
+                      onPress={() => {
+                        setBudget(opt.value.toString());
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      }}
                     >
                       <Text style={[
                         styles.chipText,
