@@ -43,7 +43,11 @@ export default function Step5Budget() {
       value: budget,
       time_on_step_seconds: timeOnStep
     });
-    if (Platform.OS !== 'web') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    if (Platform.OS === 'ios' || Platform.OS === 'android') {
+      try {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      } catch (e) {}
+    }
 
     try {
       const state = await NetInfo.fetch();
@@ -100,7 +104,11 @@ export default function Step5Budget() {
                       ]}
                       onPress={() => {
                         setBudget(opt.value.toString());
-                        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                        if (Platform.OS === 'ios' || Platform.OS === 'android') {
+                          try {
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                          } catch (e) {}
+                        }
                       }}
                     >
                       <Text style={[

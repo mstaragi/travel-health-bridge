@@ -42,7 +42,15 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
     throw new Error(`Boundary Breach: Consumer app attempted to load ${moduleName}`);
   }
 
-  // 2. Shim better-sqlite3 for Web builds
+  // 2. Shim expo-haptics for Web builds to prevent native-only method crashes
+  if (platform === 'web' && moduleName === 'expo-haptics') {
+    return {
+      type: 'sourceFile',
+      filePath: path.resolve(__dirname, 'haptics-shim.js'),
+    };
+  }
+
+  // 3. Shim better-sqlite3 for Web builds
   if (platform === 'web' && moduleName === 'better-sqlite3') {
     return {
       type: 'sourceFile',

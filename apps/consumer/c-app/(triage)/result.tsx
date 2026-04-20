@@ -149,7 +149,11 @@ export default function ResultScreen() {
       provider_name: provider.name,
       rank: rank
     });
-    if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    if (Platform.OS === 'ios' || Platform.OS === 'android') {
+      try {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+      } catch (e) {}
+    }
     setCallNowTappedAt(Date.now());
     Linking.openURL(`tel:${provider.phone}`);
   };
@@ -160,7 +164,11 @@ export default function ResultScreen() {
       provider_name: provider.name,
       rank: rank
     });
-    if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (Platform.OS === 'ios' || Platform.OS === 'android') {
+      try {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      } catch (e) {}
+    }
 
     const lat = provider.lat;
     const lng = provider.lng;

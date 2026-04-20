@@ -39,7 +39,11 @@ export default function VaultScreen() {
   const handleSave = async () => {
     if (!session?.user) return;
     setIsSaving(true);
-    if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (Platform.OS === 'ios' || Platform.OS === 'android') {
+      try {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      } catch (e) {}
+    }
 
     // Track which sections are being saved
     if (bloodGroup) track('vault_section_saved', { section_name: 'blood_group' });

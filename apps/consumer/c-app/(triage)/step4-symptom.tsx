@@ -24,7 +24,13 @@ export default function Step4Symptom() {
 
   const handleSelect = (symptomId: string) => {
     setSymptom(symptomId);
-    if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (Platform.OS === 'ios' || Platform.OS === 'android') {
+      try {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      } catch (e) {
+        console.warn('Haptics impactAsync failed', e);
+      }
+    }
     // Auto-advance
     setTimeout(() => {
       router.push('/(triage)/step5-budget');

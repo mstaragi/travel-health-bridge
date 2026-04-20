@@ -12,12 +12,12 @@ export default function TabsLayout() {
           headerShown: false,
           tabBarStyle: {
             backgroundColor: palette.navy[900],
-            borderTopColor: palette.slate[800],
+            borderTopColor: palette.navy[800],
             height: 60,
             paddingBottom: 8,
           },
           tabBarActiveTintColor: palette.teal[400],
-          tabBarInactiveTintColor: palette.slate[500],
+          tabBarInactiveTintColor: palette.navy[400],
           tabBarLabelStyle: {
             fontSize: 10,
             fontWeight: '700',
