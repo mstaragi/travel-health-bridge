@@ -149,7 +149,7 @@ export default function ResultScreen() {
       provider_name: provider.name,
       rank: rank
     });
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     setCallNowTappedAt(Date.now());
     Linking.openURL(`tel:${provider.phone}`);
   };
@@ -160,7 +160,7 @@ export default function ResultScreen() {
       provider_name: provider.name,
       rank: rank
     });
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     const lat = provider.lat;
     const lng = provider.lng;

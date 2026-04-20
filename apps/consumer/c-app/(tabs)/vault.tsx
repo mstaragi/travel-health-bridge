@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, ActivityIndicator, Alert, Platform } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { useRouter, Stack } from 'expo-router';
 import { palette, typography, spacing, borderRadius, shadows } from '@travelhealthbridge/shared/ui/tokens';
 import { Button } from '@travelhealthbridge/shared/ui/Button';
@@ -38,7 +39,7 @@ export default function VaultScreen() {
   const handleSave = async () => {
     if (!session?.user) return;
     setIsSaving(true);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     // Track which sections are being saved
     if (bloodGroup) track('vault_section_saved', { section_name: 'blood_group' });

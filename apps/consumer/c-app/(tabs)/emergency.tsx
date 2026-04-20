@@ -83,7 +83,7 @@ export default function EmergencyScreen() {
 
   const handleSOSConfirm = async () => {
     setShowSOSConsent(false);
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+    if (Platform.OS !== 'web') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
 
     const completion = calculateVaultCompletion();
     const payload = {

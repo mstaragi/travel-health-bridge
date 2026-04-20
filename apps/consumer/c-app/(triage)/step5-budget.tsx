@@ -43,7 +43,7 @@ export default function Step5Budget() {
       value: budget,
       time_on_step_seconds: timeOnStep
     });
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    if (Platform.OS !== 'web') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
     try {
       const state = await NetInfo.fetch();
@@ -100,7 +100,7 @@ export default function Step5Budget() {
                       ]}
                       onPress={() => {
                         setBudget(opt.value.toString());
-                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                       }}
                     >
                       <Text style={[
