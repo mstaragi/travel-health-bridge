@@ -20,6 +20,45 @@ export type { StalenessTier } from './utils/staleness';
 export { rankProviders } from './utils/rankProviders';
 export { computeReliabilityScore } from './utils/reliability';
 export { isQuietHoursIST, toISTString } from './utils/time';
+export {
+  initAnalytics,
+  trackAppOpened,
+  trackAppClosed,
+  trackPhoneNumberEntered,
+  trackOtpSent,
+  trackOtpVerified,
+  trackOnboardingStarted,
+  trackOnboardingCompleted,
+  trackGuestModeSelected,
+  trackTriageStarted,
+  trackTriageStepCompleted,
+  trackTriageAbandoned,
+  trackProviderRankingDisplayed,
+  trackProviderNoAnswerReported,
+  trackProviderCallInitiated,
+  trackEmergencyScreenViewed,
+  trackEmergencyContactNotified,
+  trackSOSTriggered,
+  trackVaultOpened,
+  trackVaultDataSaved,
+  trackProviderLoginAttempted,
+  trackProviderEmailOtpVerified,
+  trackProviderAvailabilityToggled,
+  trackProviderProfileUpdated,
+  trackProviderReferralViewed,
+  trackProviderFeedbackViewed,
+  trackFeedbackStarted,
+  trackFeedbackStep1Answered,
+  trackFeedbackVisitedToggle,
+  trackFeedbackCostAccuracyAnswered,
+  trackFeedbackSubmitted,
+  trackAdminCaseReviewed,
+  trackAdminProviderSuspended,
+  trackAdminDailySummaryViewed,
+  identifyUser,
+  setUserProperties,
+  trackEventWithTiming,
+} from './utils/analytics';
 
 // Constants
 export {
