@@ -149,10 +149,27 @@ export default function ConsoleLayout({
       <QuickCaseModal 
         isOpen={isCaseModalOpen} 
         onClose={() => setIsCaseModalOpen(false)}
-        onSubmit={(data) => {
-          console.log('Log Case:', data);
-          setIsCaseModalOpen(false);
-          // TODO: Call useMutation to save case
+        onSubmit={async (data) => {
+          try {
+            const response = await fetch('/api/cases', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                provider_id: data.provider_id,
+                user_id: data.user_id,
+                case_summary: data.case_summary,
+                severity: data.severity || 'medium',
+                status: 'open',
+                created_at: new Date().toISOString(),
+              }),
+            });
+            if (!response.ok) throw new Error('Failed to save case');
+            setIsCaseModalOpen(false);
+            // Refresh summary data
+            refetchSummary();
+          } catch (err) {
+            console.error('Error saving case:', err);
+          }
         }}
       />
     </div>
