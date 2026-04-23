@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "name": "travel-health-bridge-provider",
+  "framework": null,
+  "buildCommand": "npx expo export -p web --output-dir dist",
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

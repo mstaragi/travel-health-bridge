@@ -1,0 +1,219 @@
+{
+  "common": {
+    "continue": "जारी रखें",
+    "back": "वापस",
+    "cancel": "रद्द करें",
+    "submit": "जमा करें",
+    "save": "सहेजें",
+    "skip": "छोड़ें",
+    "done": "हो गया",
+    "yes": "हाँ",
+    "no": "नहीं",
+    "or": "या",
+    "loading": "लोड हो रहा है...",
+    "saving": "सहेजा जा रहा है...",
+    "saved": "सहेजा गया",
+    "error": "कुछ गलत हुआ। कृपया पुनः प्रयास करें।",
+    "retry": "पुनः प्रयास करें",
+    "close": "बंद करें",
+    "send": "भेजें",
+    "call": "कॉल करें",
+    "directions": "दिशा-निर्देश लें"
+  },
+
+  "onboarding": {
+    "slide1_title": "किसी अपरिचित शहर में बीमार पड़ गए?",
+    "slide1_body": "हम 2 मिनट में बताते हैं कि कहाँ जाएँ।",
+    "slide2_title": "हर डॉक्टर की व्यक्तिगत रूप से जाँच की गई है।",
+    "slide2_body": "फीस पहले से तय।",
+    "slide3_title": "मुफ्त। 6 भारतीय शहरों में उपलब्ध।",
+    "slide3_body": "इमरजेंसी लाइन हमेशा चालू।",
+    "get_started": "शुरू करें",
+    "skip_for_now": "अभी छोड़ें",
+    "skip": "छोड़ें"
+  },
+
+  "auth": {
+    "phone_placeholder": "फोन नंबर",
+    "send_otp_whatsapp": "WhatsApp से OTP भेजें",
+    "send_otp_sms": "SMS से OTP भेजें",
+    "otp_title": "हमने जो कोड भेजा वह दर्ज करें",
+    "otp_resend": "कोड फिर भेजें",
+    "otp_resend_in": "{seconds}s में फिर भेजें",
+    "wrong_otp": "गलत कोड। {attempts} प्रयास शेष।",
+    "locked_out": "बहुत अधिक प्रयास। 15 मिनट में पुनः प्रयास करें।",
+    "invalid_phone": "कृपया एक वैध फोन नंबर दर्ज करें।",
+    "setup_later": "बाद में सेट करें",
+    "profile_name_placeholder": "आपका नाम (वैकल्पिक)",
+    "profile_home_city": "गृह शहर",
+    "profile_language": "आप जो भाषाएँ बोलते हैं",
+    "notification_permission_title": "अपडेट रहें",
+    "notification_permission_body": "हम आपकी यात्रा के 24 घंटे बाद एक फॉलो-अप भेजते हैं।"
+  },
+
+  "consent": {
+    "title": "आगे बढ़ने से पहले",
+    "body": "Travel Health Bridge आपको verified डॉक्टर खोजने में मदद करता है। हम एक रेफरल प्लेटफॉर्म हैं, चिकित्सा प्रदाता नहीं। जीवन-घातक आपात स्थितियों के लिए हमेशा 102 या 108 पर कॉल करें। जारी रखने पर, आप हमारी सेवा की शर्तें और गोपनीयता नीति से सहमत होते हैं।",
+    "cta": "मैं समझता/समझती हूँ, जारी रखें",
+    "terms": "सेवा की शर्तें",
+    "privacy": "गोपनीयता नीति"
+  },
+
+  "triage": {
+    "step1_title": "यह कितना जरूरी है?",
+    "emergency": "आपातकाल",
+    "urgent": "आज जरूरी",
+    "can_wait": "कल तक इंतजार कर सकते हैं",
+    "step2_title": "आप किस शहर में हैं?",
+    "city_not_listed": "मेरा शहर सूची में नहीं है",
+    "detecting_location": "स्थान पता किया जा रहा है...",
+    "step3_title": "आप किस भाषा में बात करना चाहते हैं?",
+    "step3_subtitle": "सभी लागू विकल्प चुनें",
+    "step4_title": "मुख्य समस्या क्या है?",
+    "step5_title": "आपका बजट क्या है?",
+    "whatsapp_number_label": "आपका WhatsApp (वैकल्पिक)",
+    "whatsapp_number_helper": "हम यहाँ आपकी सिफारिश भेजेंगे।",
+    "find_doctor": "मेरा डॉक्टर खोजें",
+    "progress": "चरण {current} of {total}"
+  },
+
+  "triage_result": {
+    "header": "आपकी जानकारी के आधार पर, यहाँ जाएँ:",
+    "alternative_label": "अनुपलब्ध होने पर विकल्प",
+    "call_now": "अभी कॉल करें",
+    "get_directions": "दिशा-निर्देश लें",
+    "save": "सहेजें",
+    "language_gap_note": "यदि क्लिनिक में भाषा की समस्या हो, तो तुरंत हमें मैसेज करें।",
+    "provider_no_answer": "डॉक्टर ने फोन नहीं उठाया?",
+    "traveling_alone": "अकेले यात्रा कर रहे हैं?",
+    "alone_sheet_title": "मैं अकेला/अकेली हूँ और मुझे वहाँ पहुँचने में मदद चाहिए",
+    "message_emergency_contact": "मेरे इमरजेंसी संपर्क को मैसेज करें",
+    "stay_on_whatsapp": "WhatsApp पर मेरे साथ रहें",
+    "call_ambulance": "102 एम्बुलेंस को कॉल करें",
+    "alone_operating_hours": "हम सुबह 8 बजे से रात 11 बजे IST तक इसमें आपकी मदद के लिए उपलब्ध हैं।",
+    "stale_label": "उपलब्धता हाल ही में अपुष्ट — जाने से पहले कॉल करें"
+  },
+
+  "offline_result": {
+    "header": "आप ऑफलाइन हैं। {city} के लिए cached विकल्प दिखाए जा रहे हैं।",
+    "helpline_note": "कनेक्ट होने पर live recommendations के लिए हमें मैसेज करें।",
+    "cache_timestamp": "पिछली बार verified: {date}. जाने से पहले कॉल करें।"
+  },
+
+  "failure": {
+    "try_alternative": "वैकल्पिक प्रदाता आज़माएँ",
+    "message_helpline": "हमारी helpline को मैसेज करें",
+    "search_all": "सभी providers खोजें",
+    "provider_no_answer_title": "Provider ने जवाब नहीं दिया?",
+    "provider_not_reachable": "Provider से संपर्क नहीं हो रहा?"
+  },
+
+  "city_not_covered": {
+    "title": "हम अभी {city} में उपलब्ध नहीं हैं",
+    "nearest_city": "निकटतम covered शहर: {city} ({distance} km दूर)",
+    "notify_me": "{city} लॉन्च होने पर मुझे सूचित करें",
+    "email_placeholder": "आपका ईमेल",
+    "checklist_title": "अभी क्या करें"
+  },
+
+  "emergency": {
+    "whatsapp_cta": "WhatsApp Emergency Line",
+    "whatsapp_prefill": "EMERGENCY — मुझे {city} में तुरंत मदद चाहिए",
+    "outside_hours": "कार्य समय से बाहर (सुबह 8 बजे - रात 11 बजे IST)। जीवन-घातक आपात स्थितियों के लिए: तुरंत 102 पर कॉल करें। हमें एक मैसेज छोड़ें और हम सुबह 8 बजे जवाब देंगे।",
+    "verified_providers": "Verified Emergency Providers",
+    "government_hospital": "सरकारी अस्पताल",
+    "national_numbers": "राष्ट्रीय आपातकालीन नंबर",
+    "my_contacts": "मेरे इमरजेंसी संपर्क",
+    "add_contact": "अपने Medical Vault में इमरजेंसी संपर्क जोड़ें",
+    "cache_timestamp": "पिछली बार अपडेट: {time}",
+    "if_cache_empty": "नीचे सरकारी अस्पताल का उपयोग करें।",
+    "sos_button": "SOS के लिए 1.5s दबाए रखें",
+    "sos_activating": "SOS सक्रिय हो रहा है...",
+    "sos_toast": "SOS संदेश भेजने के लिए तैयार।",
+    "sos_prefill": "EMERGENCY SOS — मैं यहाँ हूँ: {location}। मुझे तुरंत चिकित्सा सहायता चाहिए।",
+    "ambulance": "एम्बुलेंस",
+    "police": "पुलिस",
+    "fire": "अग्निशमन",
+    "section1_label": "Travel Health Bridge Emergency Line",
+    "section2_label": "Verified Emergency Clinics",
+    "section3_label": "सरकारी अस्पताल",
+    "section4_label": "राष्ट्रीय नंबर",
+    "section5_label": "मेरे इमरजेंसी संपर्क"
+  },
+
+  "consent_message_modal": {
+    "header": "अपने इमरजेंसी संपर्क को सूचित करें?",
+    "no_contact": "कोई इमरजेंसी संपर्क सहेजा नहीं गया। अपने Vault में जोड़ें।",
+    "add_to_vault": "इमरजेंसी संपर्क जोड़ें",
+    "message_preview_label": "जो संदेश भेजा जाएगा:",
+    "message_preview": "नमस्ते {contactName}, यह Travel Health Bridge का स्वचालित संदेश है। {userName} को {city} में चिकित्सा सहायता की आवश्यकता हो सकती है। उनके recommended clinic का नाम {providerName} है जो {address} पर है। कृपया उनसे संपर्क करने का प्रयास करें।",
+    "send_button": "{contactName} को यह संदेश भेजें",
+    "dont_send": "न भेजें",
+    "consent_note": "यह आपके भेजने के लिए WhatsApp खोलता है — स्वचालित नहीं।",
+    "toast_sent": "{contactName} को संदेश भेजने के लिए तैयार।"
+  },
+
+  "vault": {
+    "title": "Medical Vault",
+    "completion": "{pct}% पूर्ण",
+    "privacy_note": "आपकी स्वास्थ्य जानकारी सुरक्षित रूप से संग्रहीत है। केवल आप इसे access कर सकते हैं। हम आपकी सहमति के बिना इसे कभी साझा नहीं करते।",
+    "share_button": "डॉक्टर के साथ साझा करें",
+    "sections": {
+      "basic": "बुनियादी चिकित्सा",
+      "allergies": "एलर्जी",
+      "medications": "दवाएँ",
+      "emergency_contacts": "इमरजेंसी संपर्क",
+      "insurance": "बीमा"
+    },
+    "basic_blood_group": "रक्त समूह",
+    "insurance_name_label": "बीमा कंपनी का नाम",
+    "insurance_helpline_label": "दावे / आपातकालीन हेल्पलाइन नंबर",
+    "insurance_helpline_sub": "अस्पताल cashless processing या reimbursement के लिए।",
+    "guest_prompt": "अपनी चिकित्सा जानकारी सहेजने और कहीं से भी access करने के लिए साइन इन करें।",
+    "share_header": "चिकित्सा जानकारी"
+  },
+
+  "feedback": {
+    "step0_header": "शुरू करने से पहले एक quick check",
+    "step0_question": "Travel Health Bridge खोलने से पहले, क्या किसी ने या किसी चीज़ ने आपको पहले से कोई डॉक्टर suggest किया था?",
+    "source_hotel": "होटल या गेस्टहाउस reception",
+    "source_google": "Google Maps या internet search",
+    "source_friend": "कोई दोस्त या स्थानीय व्यक्ति",
+    "source_insurance": "मेरी insurance helpline",
+    "source_travelmedix": "नहीं — Travel Health Bridge मेरा पहला कदम था",
+    "step1_question": "क्या आपको इसके बाद चिकित्सा सहायता मिली?",
+    "step1b_question": "क्या आप {providerName} गए?",
+    "step1b_yes": "हाँ, मैं {providerName} गया/गई",
+    "step1b_no": "नहीं, मैं कहीं और गया/गई",
+    "step1_why_not": "क्यों नहीं?",
+    "why_felt_better": "अपने आप बेहतर हो गए",
+    "why_hotel_referred": "होटल ने कहीं और recommend किया",
+    "why_closed": "Provider बंद था",
+    "why_other": "अन्य कारण",
+    "step2_question": "क्या cost quoted range के अंदर था?",
+    "cost_yes": "हाँ",
+    "cost_no": "नहीं — मुझसे अधिक charge किया गया",
+    "cost_not_sure": "निश्चित नहीं",
+    "overcharge_banner": "इस overcharge की रिपोर्ट करें →",
+    "step3_question": "आपका overall अनुभव कैसा रहा?",
+    "step4_question": "क्या आपकी भाषा में communication comfortable थी?",
+    "lang_yes": "हाँ",
+    "lang_partial": "आंशिक रूप से",
+    "lang_no": "नहीं",
+    "step5_question": "क्या आप किसी अन्य शहर में फिर से Travel Health Bridge का उपयोग करेंगे?",
+    "reuse_yes": "हाँ",
+    "reuse_no": "नहीं",
+    "reuse_maybe": "शायद",
+    "step6_question": "कोई comments? (वैकल्पिक)",
+    "step6_placeholder": "क्या अच्छा रहा या बेहतर हो सकता था...",
+    "thank_you_title": "धन्यवाद!",
+    "thank_you_body": "आपका feedback हर traveler के लिए हमें बेहतर बनाता है।",
+    "progress": "{current} / {total}"
+  },
+
+  "helpline": {
+    "number_label": "Travel Health Bridge helpline:",
+    "whatsapp_button": "WhatsApp पर मैसेज करें",
+    "accessibility_label": "Travel Health Bridge helpline को मैसेज करें। नंबर: {number}"
+  }
+}

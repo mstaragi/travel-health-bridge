@@ -1,0 +1,73 @@
+{
+  "expo": {
+    "name": "THB Consumer",
+    "slug": "thb-consumer",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "scheme": "thb",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1B3A5C"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.travelhealthbridge.consumer",
+      "buildNumber": "1",
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "To show nearby doctors and emergency services",
+        "NSLocationAlwaysUsageDescription": "To show nearby doctors and emergency services",
+        "NSCameraUsageDescription": "To upload receipt photos for overcharge reports",
+        "NSRemoteNotificationUsageDescription": "To remind you to share feedback after your medical visit."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1B3A5C"
+      },
+      "package": "com.travelhealthbridge.consumer",
+      "versionCode": 1,
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "RECEIVE_BOOT_COMPLETED",
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-router",
+        {
+          "root": "./c-app"
+        }
+      ],
+      "expo-secure-store",
+      "expo-location",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#00796B"
+        }
+      ],
+      [
+        "sentry-expo",
+        {
+          "organization": "travelhealthbridge",
+          "project": "consumer"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
