@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, Platform, TouchableOpacity, Linking, Image, Animated } from 'react-native';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, Platform, TouchableOpacity, Linking, Image, Animated, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTriageStore } from 'store/triageStore';
 import * as Location from 'expo-location';
@@ -9,55 +9,24 @@ import { SYMPTOM_TO_SPECIALTY, HELPLINE_WHATSAPP_NUMBER } from '@travelhealthbri
 import { haversineDistance } from '@travelhealthbridge/shared/utils/distance';
 import { FailureBottomSheet } from '@travelhealthbridge/shared/ui/FailureBottomSheet';
 import { palette, typography, spacing } from '@travelhealthbridge/shared/ui/tokens';
-import { Phone, MapPin, Clock, Star, AlertCircle, ChevronRight, Navigation, X } from 'lucide-react-native';
+import { Phone, MapPin, Clock, Star, AlertCircle, ChevronRight, Navigation, X, WifiOff } from 'lucide-react-native';
 import Modal from 'react-native-modal';
 import { track } from '@travelhealthbridge/shared';
+import { supabase } from '@travelhealthbridge/shared/api/supabase';
+import { database } from 'db';
 
-// Mock data for ranking verification until real DB is active
-const MOCK_DATA: any[] = [
-  {
-    id: 'p1',
-    name: 'Apollo Spectra Hospital',
-    address: 'Koramangala 5th Block, Bengaluru',
-    phone: '9100000001',
-    fee_opd: { min: 1200, max: 1500 },
-    languages: ['English', 'Hindi', 'Kannada'],
-    emergency: true,
-    reliability_score: 2,
-    specialties: ['General Physician', 'Surgery'],
-    badge_status: 'active',
-    staleness_tier: 'fresh',
-    badge_date: new Date().toISOString(),
-    opd_hours: { monday: { open: true, from: '09:00', to: '21:00' } },
-    lat: 12.9348,
-    lng: 77.6189
-  },
-  {
-    id: 'p2',
-    name: 'Sanjeevini Medical Center',
-    address: 'Indiranagar 100ft Rd, Bengaluru',
-    phone: '9100000002',
-    fee_opd: { min: 600, max: 800 },
-    languages: ['English', 'Hindi'],
-    emergency: false,
-    reliability_score: 1.5,
-    specialties: ['Pediatrics', 'General Physician'],
-    badge_status: 'active',
-    staleness_tier: 'fresh',
-    badge_date: new Date().toISOString(),
-    opd_hours: { monday: { open: true, from: '09:00', to: '18:00' } },
-    lat: 12.9716,
-    lng: 77.6412
-  }
-];
+// PROMPT 6: No more mock data. All providers are fetched from Supabase.
 
 export default function ResultScreen() {
   const { city, urgency, languages, symptom, budget, setCallNowTappedAt } = useTriageStore();
   const [results, setResults] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isOffline, setIsOffline] = useState(false);
   const [showFailure, setShowFailure] = useState(false);
   const [startTime] = useState(Date.now());
   const router = useRouter();
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const primaryRef = useRef<any>(null);
 
   // Soft Prompt State
   const [showSoftPrompt, setShowSoftPrompt] = useState(false);
@@ -65,23 +34,78 @@ export default function ResultScreen() {
 
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
 
+  // Get user location
   useEffect(() => {
     (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') return;
-      
-      let loc = await Location.getCurrentPositionAsync({});
-      setUserLocation({
-        lat: loc.coords.latitude,
-        lng: loc.coords.longitude
-      });
+      try {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') return;
+        let loc = await Location.getCurrentPositionAsync({});
+        setUserLocation({ lat: loc.coords.latitude, lng: loc.coords.longitude });
+      } catch (_) {}
     })();
   }, []);
 
-  useEffect(() => {
-    // Perform ranking
+  // PROMPT 6: Load real providers from Supabase
+  const loadProviders = useCallback(async () => {
+    setIsLoading(true);
+    setIsOffline(false);
+    try {
+      const { data, error } = await supabase
+        .from('providers')
+        .select('*')
+        .eq('city_id', city)
+        .neq('badge_status', 'suspended');
+
+      if (error || !data || data.length === 0) {
+        throw new Error(error?.message || 'No providers found');
+      }
+
+      // PROMPT 4: Cache to WatermelonDB for offline use
+      try {
+        const offlineCollection = database.get('offline_providers');
+        await database.write(async () => {
+          // Delete old cache for this city
+          const existing = await offlineCollection.query().fetch();
+          const old = existing.filter((r: any) => r.city === city);
+          for (const record of old) await record.destroyPermanently();
+          // Write fresh data
+          await offlineCollection.create((record: any) => {
+            record.city = city;
+            record.data_json = JSON.stringify(data);
+            record.last_synced_at = Date.now();
+          });
+        });
+      } catch (cacheErr) {
+        // Non-fatal: offline cache write failure
+        if (__DEV__) console.warn('[OFFLINE-CACHE] Write failed:', cacheErr);
+      }
+
+      runRanking(data);
+    } catch (_) {
+      // Fallback: try offline cache
+      setIsOffline(true);
+      try {
+        const Q = require('@nozbe/watermelondb/QueryDescription');
+        const cached = await database.get('offline_providers').query().fetch();
+        const cityCache = cached.find((r: any) => r.city === city);
+        if (cityCache) {
+          const offlineData = JSON.parse((cityCache as any).data_json);
+          runRanking(offlineData);
+        } else {
+          setResults([]);
+          setIsLoading(false);
+        }
+      } catch {
+        setResults([]);
+        setIsLoading(false);
+      }
+    }
+  }, [city, languages, urgency, budget, symptom, userLocation]);
+
+  const runRanking = (providers: any[]) => {
     const { primary, secondary, showHelplineCTA } = rankProviders({
-      providers: MOCK_DATA as any,
+      providers,
       userLanguages: languages || [],
       urgency: urgency || 'can_wait',
       budget: budget === 'any' ? 2000 : Number(budget) || 1000,
@@ -91,10 +115,9 @@ export default function ResultScreen() {
       symptomToSpecialty: SYMPTOM_TO_SPECIALTY,
     });
 
+    primaryRef.current = primary;
     setResults([primary, secondary].filter(Boolean));
-    if (showHelplineCTA) {
-      // In a real app we might show a different UI state here
-    }
+    setIsLoading(false);
 
     // Track result viewed
     track('triage_result_viewed', {
@@ -103,14 +126,22 @@ export default function ResultScreen() {
       urgency,
       primary_provider_id: primary?.id,
       has_location: !!userLocation,
+      source: isOffline ? 'offline_cache' : 'supabase',
     });
 
-    // Start 2-minute failure monitor
-    timerRef.current = setInterval(() => {
+    // PROMPT 4: Start 2-minute failure monitor
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(async () => {
       const elapsed = Date.now() - startTime;
-      if (elapsed >= 120000) { // 2 minutes
+      if (elapsed >= 120000) {
+        // Write no-answer event to Supabase
+        await supabase.from('provider_no_answer_events').insert({
+          provider_id: primaryRef.current?.id,
+          city_id: city,
+          session_at: new Date().toISOString(),
+        });
         track('provider_no_answer_reported', {
-          provider_id: primary?.id,
+          provider_id: primaryRef.current?.id,
           time_to_failure_seconds: 120
         });
         setShowFailure(true);
@@ -118,17 +149,21 @@ export default function ResultScreen() {
       }
     }, 5000);
 
-    // Track if any providers are stale
+    // Track stale providers
     [primary, secondary].forEach((p: any) => {
       if (p?.last_activity_at && (Date.now() - new Date(p.last_activity_at).getTime() > 14 * 24 * 60 * 60 * 1000)) {
         track('stale_provider_label_shown', { provider_id: p.id });
       }
     });
+  };
 
+  useEffect(() => {
+    loadProviders();
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, []);
+  }, [loadProviders]);
+
 
   const handleAllowNotifications = async () => {
     // Logic for notifications
@@ -209,7 +244,20 @@ export default function ResultScreen() {
           </Text>
         </View>
 
-        {results.length === 0 ? (
+        {/* Offline Banner */}
+        {isOffline && (
+          <View style={styles.offlineBanner}>
+            <WifiOff size={14} color={palette.rose[600]} />
+            <Text style={styles.offlineBannerText}>Offline — Showing cached data. Call ahead to confirm.</Text>
+          </View>
+        )}
+
+        {isLoading ? (
+          <View style={styles.loadingState}>
+            <ActivityIndicator size="large" color={palette.teal[600]} />
+            <Text style={styles.loadingText}>Finding the best match for you...</Text>
+          </View>
+        ) : results.length === 0 ? (
           <View style={styles.emptyState}>
             <AlertCircle size={64} color={palette.navy[50]} />
             <Text style={styles.emptyTitle}>No matching providers found</Text>
@@ -220,6 +268,7 @@ export default function ResultScreen() {
             </TouchableOpacity>
           </View>
         ) : (
+
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
             {/* Primary Recommendation */}
             <View style={styles.primaryCard}>
@@ -614,6 +663,36 @@ const styles = StyleSheet.create({
   modal: {
     margin: 0,
     justifyContent: 'flex-end',
+  },
+  loadingState: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: spacing.lg,
+    paddingBottom: 80,
+  },
+  loadingText: {
+    fontSize: typography.fontSize.md,
+    color: palette.navy[400],
+    fontWeight: typography.fontWeight.semibold,
+  },
+  offlineBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: palette.rose[50],
+    borderRadius: 10,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    gap: spacing.sm,
+    marginBottom: spacing.md,
+    borderWidth: 1,
+    borderColor: palette.rose[100],
+  },
+  offlineBannerText: {
+    flex: 1,
+    fontSize: typography.fontSize.xs,
+    color: palette.rose[700],
+    fontWeight: typography.fontWeight.semibold,
   },
 });
 

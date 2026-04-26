@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, ActivityIndicator, Alert, Platform } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, ActivityIndicator, Alert, Platform, Share } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useRouter, Stack } from 'expo-router';
 import { palette, typography, spacing, borderRadius, shadows } from '@travelhealthbridge/shared/ui/tokens';
@@ -24,6 +24,34 @@ export default function VaultScreen() {
   const [contacts, setContacts] = useState<{name: string, relationship: string, phone: string}[]>([]);
   const [insurance, setInsurance] = useState({ name: '', policy: '', helpline: '' });
 
+  // PROMPT 5: Real WatermelonDB read
+  const loadVaultData = useCallback(async () => {
+    if (!session?.user?.id) return;
+    setIsLoading(true);
+    try {
+      const vaultCollection = database.get('vault_entries');
+      const entries = await vaultCollection.query().fetch();
+      const entry = entries.find((r: any) => r.user_id === session!.user!.id);
+      if (entry) {
+        const e = entry as any;
+        setBloodGroup(e.blood_group || null);
+        setAllergies(e.allergies_json ? JSON.parse(e.allergies_json) : []);
+        setMedications(e.medications_json ? JSON.parse(e.medications_json) : []);
+        setContacts(e.emergency_contacts_json ? JSON.parse(e.emergency_contacts_json) : []);
+        setInsurance({
+          name: e.insurer_name || '',
+          policy: e.insurer_policy || '',
+          helpline: e.insurer_helpline || '',
+        });
+        setVaultEntry(entry);
+      }
+    } catch (e: any) {
+      if (__DEV__) console.warn('[VAULT] Load error:', e.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [session]);
+
   useEffect(() => {
     track('vault_opened', { is_guest: isGuest });
     if (isGuest) {
@@ -34,7 +62,7 @@ export default function VaultScreen() {
     } else {
       setIsLoading(false);
     }
-  }, [session, isGuest]);
+  }, [session, isGuest, loadVaultData]);
 
   const handleSave = async () => {
     if (!session?.user) return;
@@ -53,22 +81,44 @@ export default function VaultScreen() {
     if (insurance.name) track('vault_section_saved', { section_name: 'insurance' });
 
     try {
-      const payload = {
-        blood_group: bloodGroup,
-        allergies_json: JSON.stringify(allergies),
-        medications_json: JSON.stringify(medications),
-        emergency_contacts_json: JSON.stringify(contacts),
-        insurer_name: insurance.name,
-        insurer_policy: insurance.policy,
-        insurer_helpline: insurance.helpline,
-        user_id: session.user.id,
-        last_synced_at: Date.now()
-      };
-      
-      // Save logic continues...
-      // ...
-    } catch (e) {
-      // ...
+      // PROMPT 5: Real WatermelonDB write
+      await database.write(async () => {
+        const vaultCollection = database.get('vault_entries');
+        const existing = await vaultCollection.query().fetch();
+        const userEntry = existing.find((r: any) => r.user_id === session!.user!.id);
+
+        if (userEntry) {
+          // Update existing record
+          await userEntry.update((record: any) => {
+            record.blood_group = bloodGroup;
+            record.allergies_json = JSON.stringify(allergies);
+            record.medications_json = JSON.stringify(medications);
+            record.emergency_contacts_json = JSON.stringify(contacts);
+            record.insurer_name = insurance.name;
+            record.insurer_policy = insurance.policy;
+            record.insurer_helpline = insurance.helpline;
+            record.last_synced_at = Date.now();
+          });
+        } else {
+          // Create new record
+          await vaultCollection.create((record: any) => {
+            record.user_id = session!.user!.id;
+            record.blood_group = bloodGroup;
+            record.allergies_json = JSON.stringify(allergies);
+            record.medications_json = JSON.stringify(medications);
+            record.emergency_contacts_json = JSON.stringify(contacts);
+            record.insurer_name = insurance.name;
+            record.insurer_policy = insurance.policy;
+            record.insurer_helpline = insurance.helpline;
+            record.last_synced_at = Date.now();
+          });
+        }
+      });
+
+      track('vault_saved_successfully', { user_id: session!.user!.id });
+      Alert.alert('Saved', 'Your medical vault has been updated.');
+    } catch (e: any) {
+      Alert.alert('Error', 'Failed to save vault: ' + e.message);
     } finally {
       setIsSaving(false);
     }
