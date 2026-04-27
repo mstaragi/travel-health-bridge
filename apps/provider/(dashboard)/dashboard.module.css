@@ -1,0 +1,260 @@
+.dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: #f8fafb;
+  min-height: 100vh;
+}
+
+.header {
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.phone {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin: 0.5rem 0 0;
+}
+
+/* AVAILABILITY CARD - PERFORMANCE CRITICAL */
+.availabilityCard {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.availabilityHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.availabilityHeader h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0;
+}
+
+.timingBadge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+.timingBadgeGood {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.timingBadgeWarning {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* TOGGLE BUTTON - MUST RESPOND IN <1000ms */
+.availabilityToggle {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 1.5rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  background: #f8fafc;
+  font-size: 1.125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 150ms ease-in-out;
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.availabilityToggle:hover:not(:disabled) {
+  border-color: #cbd5e1;
+  background: #f1f5f9;
+}
+
+.availabilityToggle:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.availabilityToggle.availableOn {
+  border-color: #14b8a6;
+  background: #f0fdfa;
+  color: #0d9488;
+}
+
+.availabilityToggle.availableOn:hover:not(:disabled) {
+  background: #ccfbf1;
+  border-color: #0d9488;
+}
+
+.availabilityToggle.availableOff {
+  border-color: #ef4444;
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.availabilityToggle.availableOff:hover:not(:disabled) {
+  background: #fee2e2;
+  border-color: #dc2626;
+}
+
+.toggleSwitch {
+  width: 3rem;
+  height: 1.75rem;
+  border-radius: 9999px;
+  background: #cbd5e1;
+  position: relative;
+  transition: background 150ms ease-in-out;
+}
+
+.availabilityToggle.availableOn .toggleSwitch {
+  background: #14b8a6;
+}
+
+.availabilityToggle.availableOff .toggleSwitch {
+  background: #ef4444;
+}
+
+.toggleSwitch::after {
+  content: '';
+  position: absolute;
+  top: 0.25rem;
+  left: 0.25rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background: white;
+  transition: left 150ms ease-in-out;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.availabilityToggle.availableOn .toggleSwitch::after {
+  left: 1.5rem;
+}
+
+.toggleLabel {
+  flex: 1;
+  text-align: center;
+}
+
+.lastActivity {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin: 1rem 0 0;
+  text-align: center;
+}
+
+.performanceNote {
+  font-size: 0.875rem;
+  color: #065f46;
+  margin: 1rem 0 0;
+  text-align: center;
+  background: #d1fae5;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+}
+
+.performanceWarning {
+  font-size: 0.875rem;
+  color: #991b1b;
+  margin: 1rem 0 0;
+  text-align: center;
+  background: #fee2e2;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+}
+
+/* STATS GRID */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.statCard {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.statValue {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #14b8a6;
+  margin-bottom: 0.5rem;
+}
+
+.statLabel {
+  font-size: 0.875rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #f8fafb;
+  font-size: 1rem;
+  color: #0f172a;
+}
+
+.spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid #e2e8f0;
+  border-top-color: #14b8a6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 1rem;
+  }
+
+  .header h1 {
+    font-size: 1.5rem;
+  }
+
+  .availabilityCard {
+    padding: 1rem;
+  }
+
+  .availabilityToggle {
+    padding: 1rem;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+}
