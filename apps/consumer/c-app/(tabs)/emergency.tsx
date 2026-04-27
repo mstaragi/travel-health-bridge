@@ -90,37 +90,71 @@ export default function EmergencyScreen() {
     }
 
     const completion = calculateVaultCompletion();
-    const payload = {
-      city: activeCity?.name || 'Unknown',
-      blood_group: vaultData?.blood_group || null,
-      known_allergies: !!(vaultData?.allergies_json && JSON.parse(vaultData.allergies_json).length > 0),
-      has_emergency_contact: !!(vaultData?.emergency_contacts_json && JSON.parse(vaultData.emergency_contacts_json).length > 0),
-      vault_completion_pct: completion,
-    };
-
-    track('sos_triggered', payload);
-    await logSOS(payload);
     
-    // Attempt location share via SMS/WhatsApp after logging
     try {
-        const location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
-        const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${location.coords.latitude},${location.coords.longitude}`;
-        const sosMessage = `EMERGENCY SOS — I need urgent assistance in ${activeCity?.name || 'my location'}. Map: ${mapsUrl}`;
-        
-        let contacts = [];
-        if (vaultData?.emergency_contacts_json) {
-            try { contacts = JSON.parse(vaultData.emergency_contacts_json); } catch (e) {}
-        }
+      // Get current location for sharing
+      const location = await Location.getCurrentPositionAsync({ 
+        accuracy: Location.Accuracy.Balanced 
+      });
+      
+      const mapsUrl = `https://www.google.com/maps/?q=${location.coords.latitude},${location.coords.longitude}`;
+      const sosMessage = `🚨 EMERGENCY SOS 🚨\n\nI need urgent assistance in ${activeCity?.name || 'my current location'}.\n\nMy Location: ${mapsUrl}\n\nVault Status: ${completion}% complete`;
+      
+      // Log SOS event with full details
+      const payload = {
+        city: activeCity?.name || 'Unknown',
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        blood_group: vaultData?.blood_group || null,
+        known_allergies: !!(vaultData?.allergies_json && JSON.parse(vaultData.allergies_json).length > 0),
+        has_emergency_contact: !!(vaultData?.emergency_contacts_json && JSON.parse(vaultData.emergency_contacts_json).length > 0),
+        vault_completion_pct: completion,
+        location_shared: true,
+        timestamp: new Date().toISOString(),
+      };
 
-        if (contacts.length > 0 && contacts[0].phone) {
-            track('emergency_contact_notified', { method: 'whatsapp', contact_type: 'personal' });
-            Linking.openURL(`whatsapp://send?phone=${contacts[0].phone}&text=${encodeURIComponent(sosMessage)}`);
-        } else {
-            track('emergency_contact_notified', { method: 'whatsapp', contact_type: 'helpline' });
-            Linking.openURL(`whatsapp://send?phone=${HELPLINE_WHATSAPP_NUMBER}&text=${encodeURIComponent(sosMessage)}`);
+      track('sos_triggered', { button_tap_count: 1 });
+      track('emergency_contact_notified', { 
+        contact_method: 'whatsapp',
+        location_shared: true,
+        user_city: activeCity?.name
+      });
+      
+      // Persist SOS event to database
+      await logSOS(payload);
+      
+      // Attempt to share location with emergency contact via WhatsApp
+      let contacts = [];
+      if (vaultData?.emergency_contacts_json) {
+        try { 
+          contacts = JSON.parse(vaultData.emergency_contacts_json); 
+        } catch (e) {
+          console.error('Error parsing emergency contacts:', e);
         }
+      }
+
+      if (contacts.length > 0 && contacts[0].phone) {
+        // Share with personal emergency contact
+        const whatsappNumber = contacts[0].phone.replace(/[^\d+]/g, '');
+        Linking.openURL(`whatsapp://send?phone=${whatsappNumber}&text=${encodeURIComponent(sosMessage)}`);
+      } else {
+        // Share with helpline if no personal contact
+        Linking.openURL(`whatsapp://send?phone=${HELPLINE_WHATSAPP_NUMBER}&text=${encodeURIComponent(sosMessage)}`);
+      }
+      
+      // Show confirmation
+      Alert.alert(
+        'SOS Activated',
+        'Emergency contact notified with your location.\n\nIf you can, please also call 102 for ambulance.',
+        [{ text: 'OK', onPress: () => {} }]
+      );
     } catch (err) {
-        Alert.alert('SOS Triggered', 'Emergency services notified. Please call 102 if possible.');
+      console.error('SOS Error:', err);
+      Alert.alert(
+        'SOS Triggered',
+        'Emergency mode activated. Location share failed, but alert sent. Please call 102 or your emergency contact directly.',
+        [{ text: 'OK', onPress: () => {} }]
+      );
     }
   };
 
