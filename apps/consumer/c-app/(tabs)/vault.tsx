@@ -5,15 +5,26 @@ import { useRouter, Stack } from 'expo-router';
 import { palette, typography, spacing, borderRadius, shadows } from '@travelhealthbridge/shared/ui/tokens';
 import { Button } from '@travelhealthbridge/shared/ui/Button';
 import { Card } from '@travelhealthbridge/shared/ui/Card';
-import { track } from '@travelhealthbridge/shared';
+import { track, supabase } from '@travelhealthbridge/shared';
 import { useAuthStore } from 'store/authStore';
+import { useVaultStore } from 'store/vaultStore';
 import { database } from 'db';
+import * as SecureStore from 'expo-secure-store';
+import { encrypt, decrypt } from '@travelhealthbridge/shared/utils/encryption';
+
+interface VaultData {
+  blood_group: string | null;
+  allergies: string[];
+  medications: Array<{name: string, dose: string}>;
+  emergency_contacts: Array<{name: string, relationship: string, phone: string}>;
+  insurance: { name: string; policy: string; helpline: string };
+}
 
 export default function VaultScreen() {
   const router = useRouter();
   const { session, isGuest } = useAuthStore();
+  const { setVaultData } = useVaultStore();
   
-  const [vaultEntry, setVaultEntry] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   
@@ -36,6 +47,64 @@ export default function VaultScreen() {
     }
   }, [session, isGuest]);
 
+  const loadVaultData = async () => {
+    setIsLoading(true);
+    try {
+      if (!session?.user?.id) return;
+
+      // Try to fetch from Supabase
+      const { data, error } = await supabase
+        .from('vault_data')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .single();
+
+      if (!error && data) {
+        // Decrypt sensitive data
+        try {
+          const decryptedAllergies = data.allergies_encrypted ? 
+            JSON.parse(await decrypt(data.allergies_encrypted)) : [];
+          const decryptedMedications = data.medications_encrypted ? 
+            JSON.parse(await decrypt(data.medications_encrypted)) : [];
+          const decryptedContacts = data.emergency_contacts_encrypted ? 
+            JSON.parse(await decrypt(data.emergency_contacts_encrypted)) : [];
+
+          setBloodGroup(data.blood_group);
+          setAllergies(decryptedAllergies);
+          setMedications(decryptedMedications);
+          setContacts(decryptedContacts);
+          setInsurance({
+            name: data.insurer_name || '',
+            policy: data.insurer_policy || '',
+            helpline: data.insurer_helpline || ''
+          });
+
+          // Update Zustand store for cross-screen access
+          setVaultData({
+            blood_group: data.blood_group,
+            allergies_json: JSON.stringify(decryptedAllergies),
+            medications_json: JSON.stringify(decryptedMedications),
+            emergency_contacts_json: JSON.stringify(decryptedContacts),
+            insurer_name: data.insurer_name
+          });
+
+          track('vault_data_loaded', { 
+            has_blood_group: !!data.blood_group,
+            allergies_count: decryptedAllergies.length,
+            medications_count: decryptedMedications.length,
+            contacts_count: decryptedContacts.length
+          });
+        } catch (err) {
+          console.error('Error decrypting vault data:', err);
+        }
+      }
+    } catch (err) {
+      console.error('Error loading vault data:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSave = async () => {
     if (!session?.user) return;
     setIsSaving(true);
@@ -53,25 +122,89 @@ export default function VaultScreen() {
     if (insurance.name) track('vault_section_saved', { section_name: 'insurance' });
 
     try {
+      // Encrypt sensitive data
+      const encryptedAllergies = allergies.length > 0 ? await encrypt(JSON.stringify(allergies)) : null;
+      const encryptedMedications = medications.length > 0 ? await encrypt(JSON.stringify(medications)) : null;
+      const encryptedContacts = contacts.length > 0 ? await encrypt(JSON.stringify(contacts)) : null;
+
       const payload = {
         blood_group: bloodGroup,
-        allergies_json: JSON.stringify(allergies),
-        medications_json: JSON.stringify(medications),
-        emergency_contacts_json: JSON.stringify(contacts),
+        allergies_encrypted: encryptedAllergies,
+        medications_encrypted: encryptedMedications,
+        emergency_contacts_encrypted: encryptedContacts,
         insurer_name: insurance.name,
         insurer_policy: insurance.policy,
         insurer_helpline: insurance.helpline,
         user_id: session.user.id,
-        last_synced_at: Date.now()
+        last_synced_at: new Date().toISOString()
       };
       
-      // Save logic continues...
-      // ...
+      const { error } = await supabase
+        .from('vault_data')
+        .upsert([payload], { onConflict: 'user_id' });
+
+      if (error) throw error;
+
+      // Update local Zustand store
+      setVaultData({
+        blood_group: bloodGroup,
+        allergies_json: JSON.stringify(allergies),
+        medications_json: JSON.stringify(medications),
+        emergency_contacts_json: JSON.stringify(contacts),
+        insurer_name: insurance.name
+      });
+
+      track('vault_data_saved', { 
+        sections_saved: 5,
+        total_items: allergies.length + medications.length + contacts.length
+      });
+
+      Alert.alert('Success', 'Your medical data has been securely saved.');
     } catch (e) {
-      // ...
+      console.error('Error saving vault:', e);
+      Alert.alert('Error', 'Failed to save vault data. Please try again.');
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleDeleteAccount = async () => {
+    Alert.alert(
+      'Delete Account',
+      'This will delete your account and anonymize your feedback data (keeping only ratings). Continue?',
+      [
+        { text: 'Cancel', onPress: () => {} },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              // Anonymize feedback
+              const { error: feedbackError } = await supabase
+                .from('feedback')
+                .update({ user_id: null, provider_name: null, notes: null })
+                .eq('user_id', session?.user?.id);
+
+              if (feedbackError) throw feedbackError;
+
+              // Delete vault data
+              await supabase.from('vault_data').delete().eq('user_id', session?.user?.id);
+
+              // Delete user account via auth
+              await supabase.auth.admin.deleteUser(session?.user?.id);
+
+              track('account_deleted', {});
+
+              Alert.alert('Account Deleted', 'Your account has been deleted.');
+              router.replace('/(auth)/login');
+            } catch (err) {
+              console.error('Error deleting account:', err);
+              Alert.alert('Error', 'Failed to delete account.');
+            }
+          }
+        }
+      ]
+    );
   };
 
   const handleShare = async () => {
