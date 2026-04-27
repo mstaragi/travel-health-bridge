@@ -4,3 +4,5 @@
 
 export { usePhoneAuth } from './usePhoneAuth';
 export type { } from './usePhoneAuth';
+
+export { useOfflineCache } from './useOfflineCache';

@@ -97,26 +97,23 @@ export default function ResultScreen() {
     }
 
     // Track result viewed
-    track('triage_result_viewed', {
+    track('provider_ranking_displayed', {
       city,
       symptom_category: symptom,
       urgency,
       primary_provider_id: primary?.id,
       has_location: !!userLocation,
+      total_providers_ranked: 2,
+      top_providers_count: [primary, secondary].filter(Boolean).length,
+      user_city_id: city,
     });
 
-    // Start 2-minute failure monitor
-    timerRef.current = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      if (elapsed >= 120000) { // 2 minutes
-        track('provider_no_answer_reported', {
-          provider_id: primary?.id,
-          time_to_failure_seconds: 120
-        });
-        setShowFailure(true);
-        if (timerRef.current) clearInterval(timerRef.current);
-      }
-    }, 5000);
+    // Start 2-minute no-answer timer with proper cleanup
+    let timeoutId: NodeJS.Timeout | null = null;
+    timeoutId = setTimeout(() => {
+      // Check provider availability at 2-min mark
+      checkProviderAvailability(primary);
+    }, 2 * 60 * 1000);
 
     // Track if any providers are stale
     [primary, secondary].forEach((p: any) => {
@@ -126,9 +123,29 @@ export default function ResultScreen() {
     });
 
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (timeoutId) clearTimeout(timeoutId);
     };
   }, []);
+
+  // Check provider availability at 2-min mark
+  const checkProviderAvailability = async (provider: any) => {
+    if (!provider) return;
+    
+    try {
+      // In production, check real provider status from Supabase
+      // For now, simulate checking provider's current availability
+      track('provider_no_answer_reported', {
+        provider_id: provider.id,
+        provider_name: provider.name,
+        attempted_calls: 1,
+      });
+      
+      // Trigger FailureBottomSheet
+      setShowFailure(true);
+    } catch (err) {
+      console.error('Error checking provider availability:', err);
+    }
+  };
 
   const handleAllowNotifications = async () => {
     // Logic for notifications
