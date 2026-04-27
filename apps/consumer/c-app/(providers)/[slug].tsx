@@ -7,8 +7,9 @@ import { Badge } from '@travelhealthbridge/shared/ui/Badge';
 import { OpenStatusBadge } from '@travelhealthbridge/shared/ui/OpenStatusBadge';
 import { LanguagePill } from '@travelhealthbridge/shared/ui/LanguagePill';
 import { FailureBottomSheet } from '@travelhealthbridge/shared/ui/FailureBottomSheet';
-import { track } from '@travelhealthbridge/shared';
+import { track, supabase } from '@travelhealthbridge/shared';
 import { isOpenNow, formatFeeRange } from '@travelhealthbridge/shared/utils/openStatus';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Internal Mock functions
 const fetchMockProvider = (id: string) => ({
@@ -37,35 +38,96 @@ const fetchMockProvider = (id: string) => ({
 type Provider = ReturnType<typeof fetchMockProvider>;
 
 export default function ProviderProfileScreen() {
-  const { id } = useLocalSearchParams();
+  const { slug } = useLocalSearchParams();
   const router = useRouter();
   const [provider, setProvider] = useState<Provider | null>(null);
   const [isHoursExpanded, setIsHoursExpanded] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
 
   useEffect(() => {
-    // Mock simulation
-    if (id) {
-      const p = fetchMockProvider(id as string);
-      setProvider(p);
-      track('provider_profile_viewed', { 
-        provider_id: p.id,
-        provider_name: p.name
-      });
-    }
-  }, [id]);
+    loadProviderData();
+  }, [slug]);
 
-  const handleSave = () => {
-    if (provider) {
-      track('provider_saved', { provider_id: provider.id });
-      // Logic for saving...
+  const loadProviderData = async () => {
+    setLoading(true);
+    try {
+      if (!slug) {
+        setProvider(null);
+        return;
+      }
+
+      // Try to fetch from Supabase
+      const { data, error } = await supabase
+        .from('providers')
+        .select(`*,
+          reviews: feedback(
+            id,
+            star_rating,
+            language_comfort,
+            cost_accurate,
+            notes,
+            created_at
+          )`)
+        .eq('id', slug)
+        .single();
+
+      if (error) {
+        // Fall back to mock data
+        console.warn('Error loading provider from Supabase:', error);
+        setProvider(fetchMockProvider(slug as string));
+      } else {
+        setProvider(data as Provider);
+        track('provider_profile_viewed', { 
+          provider_id: data.id,
+          provider_name: data.name
+        });
+      }
+    } catch (err) {
+      console.error('Error loading provider:', err);
+      setProvider(fetchMockProvider(slug as string));
+    } finally {
+      setLoading(false);
     }
   };
+
+  const handleSave = async () => {
+    if (provider) {
+      try {
+        const savedProviders = await AsyncStorage.getItem('saved_providers');
+        const saved = JSON.parse(savedProviders || '[]');
+        
+        if (!saved.find((p: any) => p.id === provider.id)) {
+          saved.push({
+            id: provider.id,
+            name: provider.name,
+            city_id: provider.city_id,
+            phone: provider.phone,
+            fee_min: provider.fee_min,
+            fee_max: provider.fee_max,
+            saved_at: new Date().toISOString()
+          });
+          await AsyncStorage.setItem('saved_providers', JSON.stringify(saved));
+          track('provider_saved', { provider_id: provider.id });
+        }
+      } catch (err) {
+        console.error('Error saving provider:', err);
+      }
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator color={palette.teal[600]} size="large" />
+      </View>
+    );
+  }
 
   if (!provider) {
     return (
       <View style={styles.loading}>
-        <ActivityIndicator color={palette.teal[600]} />
+        <Text>Provider not found</Text>
       </View>
     );
   }
@@ -74,7 +136,12 @@ export default function ProviderProfileScreen() {
   const openStatus = isOpenNow(provider.opd_hours, new Date());
 
   const handleCall = () => {
-    Linking.openURL(`tel:1234567890`);
+    const cleanPhone = provider.phone.replace(/[^\d+]/g, '');
+    Linking.openURL(`tel:${cleanPhone}`);
+    track('provider_call_initiated', { 
+      provider_id: provider.id,
+      provider_name: provider.name
+    });
   };
 
   const handleDirections = () => {
