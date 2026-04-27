@@ -18,8 +18,22 @@ export { formatFeeRange } from './utils/formatFee';
 export { computeStalenessTier } from './utils/staleness';
 export type { StalenessTier } from './utils/staleness';
 export { rankProviders } from './utils/rankProviders';
+export {
+  rankProvidersOptimized,
+  clearRankingCache,
+  getRankingCacheStats,
+  precomputeRankings,
+} from './utils/rankProvidersOptimized';
 export { computeReliabilityScore } from './utils/reliability';
 export { isQuietHoursIST, toISTString } from './utils/time';
+export {
+  performanceMonitor,
+  usePerformanceTracking,
+  debounce,
+  memoize,
+  scheduleIdleCallback,
+  batchStateUpdates,
+} from './utils/performance';
 export {
   initAnalytics,
   trackAppOpened,
