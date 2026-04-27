@@ -16,13 +16,18 @@ export default function Step2City() {
   const router = useRouter();
   const startTime = useRef(Date.now());
 
-  const handleDetectLocation = async () => {
+  // Auto-detect location on mount
+  useEffect(() => {
+    handleDetectLocation(true);
+  }, []);
+
+  const handleDetectLocation = async (isAutoDetect = false) => {
     setIsDetecting(true);
     setError(null);
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        setError('Location permission denied. Please select manually.');
+        setError('Location permission denied. Please select your city manually below.');
         return;
       }
 
@@ -39,20 +44,40 @@ export default function Step2City() {
         );
         if (foundCity) {
           setCity(foundCity.id);
+          // Auto-advance if the city was detected automatically
+          if (isAutoDetect) {
+            // Small delay so user sees the detection
+            setTimeout(() => {
+              const timeOnStep = Math.round((Date.now() - startTime.current) / 1000);
+              track('triage_step_completed', { 
+                step_number: 2, 
+                value: foundCity.id,
+                time_on_step_seconds: timeOnStep,
+                method: 'auto_detect'
+              });
+              router.push('/(triage)/step3-language');
+            }, 800);
+          }
         } else {
           // City not covered
           track('non_covered_city_hit', { 
             city_entered: address.city,
-            nearest_covered_city: 'Delhi', // Placeholder logic for now
+            nearest_covered_city: 'Delhi',
             distance_km: 0
           });
-          router.push('/(triage)/city-not-covered');
+          if (!isAutoDetect) {
+            router.push('/(triage)/city-not-covered');
+          } else {
+            setError(`"${address.city}" is not yet covered. Please select a city below.`);
+          }
         }
       } else {
-        setError('Could not determine city. Please select manually.');
+        setError('Could not determine city. Please select manually below.');
       }
     } catch (err) {
-      setError('Could not detect location. Please select manually.');
+      if (!isAutoDetect) {
+        setError('Could not detect location. Please select manually below.');
+      }
     } finally {
       setIsDetecting(false);
     }
@@ -63,7 +88,8 @@ export default function Step2City() {
     track('triage_step_completed', { 
       step_number: 2, 
       value: cityId,
-      time_on_step_seconds: timeOnStep
+      time_on_step_seconds: timeOnStep,
+      method: 'manual_select'
     });
     setCity(cityId);
     router.push('/(triage)/step3-language');
@@ -79,11 +105,21 @@ export default function Step2City() {
 
         <TouchableOpacity 
           style={styles.detectButton} 
-          onPress={handleDetectLocation}
+          onPress={() => handleDetectLocation(false)}
           disabled={isDetecting}
         >
           {isDetecting ? (
-            <ActivityIndicator color={palette.teal[600]} />
+            <>
+              <ActivityIndicator color={palette.teal[600]} style={{ marginRight: 8 }} />
+              <Text style={styles.detectText}>Detecting your location...</Text>
+            </>
+          ) : city ? (
+            <>
+              <Navigation size={20} color={palette.teal[600]} style={styles.detectIcon} />
+              <Text style={styles.detectText}>
+                Detected: {CITIES.find(c => c.id === city)?.name || city} ✓
+              </Text>
+            </>
           ) : (
             <>
               <Navigation size={20} color={palette.teal[600]} style={styles.detectIcon} />
@@ -99,6 +135,9 @@ export default function Step2City() {
           </View>
         )}
 
+        <Text style={{ fontSize: 14, fontWeight: '700', color: palette.navy[400], marginBottom: spacing.md, textTransform: 'uppercase', letterSpacing: 1 }}>
+          Or select your city
+        </Text>
         <View style={styles.cityGrid}>
           {CITIES.map((c) => (
             <TouchableOpacity

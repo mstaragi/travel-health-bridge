@@ -18,6 +18,10 @@ interface InputProps extends Omit<TextInputProps, 'style'> {
   error?: string;
   helper?: string;
   containerStyle?: ViewStyle;
+  /** Style applied to the input wrapper row (the border box) */
+  wrapperStyle?: ViewStyle;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
   required?: boolean;
   secureToggle?: boolean; // shows eye icon for password fields
   testID?: string;
@@ -28,6 +32,9 @@ export function Input({
   error,
   helper,
   containerStyle,
+  wrapperStyle,
+  leftIcon,
+  rightIcon,
   required,
   secureToggle,
   secureTextEntry,
@@ -64,7 +71,7 @@ export function Input({
       ) : null}
 
       <View
-        style={{
+        style={[{
           flexDirection: 'row',
           alignItems: 'center',
           backgroundColor: theme.inputBackground,
@@ -72,8 +79,9 @@ export function Input({
           borderColor,
           borderRadius: borderRadius.md,
           paddingHorizontal: spacing.md,
-        }}
+        }, wrapperStyle]}
       >
+        {leftIcon ? <View style={{ marginRight: spacing.sm }}>{leftIcon}</View> : null}
         <TextInput
           {...rest}
           secureTextEntry={isSecure}
@@ -90,6 +98,7 @@ export function Input({
           }}
           placeholderTextColor={theme.textTertiary}
         />
+        {rightIcon ? <View style={{ marginLeft: spacing.sm }}>{rightIcon}</View> : null}
         {secureToggle ? (
           <TouchableOpacity
             onPress={() => setShowSecret(!showSecret)}

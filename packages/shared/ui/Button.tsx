@@ -20,12 +20,22 @@ import { typography, spacing, borderRadius, shadows } from './tokens';
 export type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost' | 'emergency';
 
 interface ButtonProps {
-  label: string;
+  /** Primary text label. Use `label` or `title` — both work. */
+  label?: string;
+  /** Alias for label — many callers use this. */
+  title?: string;
   onPress: () => void;
   variant?: ButtonVariant;
   loading?: boolean;
+  /** Alias for loading */
+  isLoading?: boolean;
   disabled?: boolean;
   fullWidth?: boolean;
+  /** Optional icon element rendered left of label */
+  icon?: React.ReactNode;
+  /** Optional icon rendered right of label */
+  rightIcon?: React.ReactNode;
+  size?: 'sm' | 'md' | 'lg';
   accessibilityLabel?: string;
   style?: ViewStyle;
   textStyle?: TextStyle;
@@ -34,21 +44,28 @@ interface ButtonProps {
 
 export function Button({
   label,
+  title,
   onPress,
   variant = 'primary',
   loading = false,
+  isLoading = false,
   disabled = false,
   fullWidth = false,
+  icon,
+  rightIcon,
+  size = 'md',
   accessibilityLabel,
   style,
   textStyle,
   testID,
 }: ButtonProps) {
   const { theme } = useTheme();
-  const isDisabled = disabled || loading;
+  const isProcessing = loading || isLoading;
+  const isDisabled = disabled || isProcessing;
+  const displayLabel = label || title || '';
 
-  const buttonStyle = getButtonStyle(variant, isDisabled, fullWidth, theme);
-  const labelStyle = getLabelStyle(variant, isDisabled, theme);
+  const buttonStyle = getButtonStyle(variant, isDisabled, fullWidth, theme, size);
+  const labelStyle = getLabelStyle(variant, isDisabled, theme, size);
   const spinnerColor = variant === 'secondary' || variant === 'ghost'
     ? theme.buttonSecondaryText
     : '#FFFFFF';
@@ -57,16 +74,20 @@ export function Button({
     <TouchableOpacity
       onPress={isDisabled ? undefined : onPress}
       activeOpacity={isDisabled ? 1 : 0.82}
-      accessibilityLabel={accessibilityLabel ?? label}
+      accessibilityLabel={accessibilityLabel ?? displayLabel}
       accessibilityRole="button"
-      accessibilityState={{ disabled: isDisabled, busy: loading }}
+      accessibilityState={{ disabled: isDisabled, busy: isProcessing }}
       testID={testID}
       style={[buttonStyle, style]}
     >
-      {loading ? (
+      {isProcessing ? (
         <ActivityIndicator size="small" color={spinnerColor} />
       ) : (
-        <Text style={[labelStyle, textStyle]}>{label}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          {icon}
+          <Text style={[labelStyle, textStyle]}>{displayLabel}</Text>
+          {rightIcon}
+        </View>
       )}
     </TouchableOpacity>
   );
@@ -76,15 +97,22 @@ function getButtonStyle(
   variant: ButtonVariant,
   disabled: boolean,
   fullWidth: boolean,
-  theme: ReturnType<typeof useTheme>['theme']
+  theme: ReturnType<typeof useTheme>['theme'],
+  size: 'sm' | 'md' | 'lg' = 'md'
 ): ViewStyle {
+  const sizeMap = {
+    sm: { minHeight: 36, paddingVertical: spacing.sm, paddingHorizontal: spacing.md },
+    md: { minHeight: 48, paddingVertical: spacing.md, paddingHorizontal: spacing.xl },
+    lg: { minHeight: 56, paddingVertical: spacing.lg, paddingHorizontal: spacing.xl },
+  };
+  const s = sizeMap[size];
   const base: ViewStyle = {
     borderRadius: borderRadius.lg,
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.md,
+    paddingHorizontal: s.paddingHorizontal,
+    paddingVertical: s.paddingVertical,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 48,
+    minHeight: s.minHeight,
     ...(fullWidth ? { width: '100%' } : {}),
   };
 
@@ -127,11 +155,17 @@ function getButtonStyle(
 function getLabelStyle(
   variant: ButtonVariant,
   disabled: boolean,
-  theme: ReturnType<typeof useTheme>['theme']
+  theme: ReturnType<typeof useTheme>['theme'],
+  size: 'sm' | 'md' | 'lg' = 'md'
 ): TextStyle {
+  const fontSizeMap = {
+    sm: typography.fontSize.sm,
+    md: typography.fontSize.base,
+    lg: typography.fontSize.lg,
+  };
   const base: TextStyle = {
     fontWeight: typography.fontWeight.bold,
-    fontSize: typography.fontSize.base,
+    fontSize: fontSizeMap[size],
   };
 
   if (disabled) {

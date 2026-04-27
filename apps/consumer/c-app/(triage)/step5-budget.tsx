@@ -12,10 +12,11 @@ import * as Haptics from 'expo-haptics';
 import { track } from '@travelhealthbridge/shared';
 
 const BUDGET_OPTIONS = [
-  { label: 'Minimal', value: 500 },
-  { label: 'Mid-range', value: 1500 },
-  { label: 'Premium', value: 3000 },
-  { label: 'Any', value: 10000 },
+  { label: '₹200 – ₹400', value: '400' },
+  { label: '₹400 – ₹600', value: '600' },
+  { label: '₹600 – ₹900', value: '900' },
+  { label: '₹900 – ₹1200', value: '1200' },
+  { label: 'Any Price', value: 'any' },
 ];
 
 export default function Step5Budget() {
@@ -100,10 +101,10 @@ export default function Step5Budget() {
                       key={opt.value}
                       style={[
                         styles.chip,
-                        budget === opt.value.toString() && styles.chipActive
+                        budget === opt.value && styles.chipActive
                       ]}
                       onPress={() => {
-                        setBudget(opt.value.toString());
+                        setBudget(opt.value);
                         if (Platform.OS === 'ios' || Platform.OS === 'android') {
                           try {
                             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -113,9 +114,9 @@ export default function Step5Budget() {
                     >
                       <Text style={[
                         styles.chipText,
-                        budget === opt.value.toString() && styles.chipTextActive
+                        budget === opt.value && styles.chipTextActive
                       ]}>
-                        {opt.label === 'Any' ? 'Any Price' : `₹${opt.value}`}
+                        {opt.label}
                       </Text>
                     </TouchableOpacity>
                   ))}

@@ -51,8 +51,17 @@ export default function TriageLayout() {
         
         {/* Progress Bar Container */}
         {showProgress && (
-          <View style={styles.progressContainer}>
-            <View style={[styles.progressFill, { width: `${progress * 100}%` }]} />
+          <View style={{ alignItems: 'center' }}>
+            <View style={styles.progressContainer}>
+              <View style={[styles.progressFill, { width: `${progress * 100}%` }]} />
+            </View>
+            <Text style={{ fontSize: 11, color: palette.navy[400], fontWeight: '600', marginTop: 4 }}>
+              {currentStep === 'step1-urgency' && 'Step 1 of 5 — Urgency'}
+              {currentStep === 'step2-city' && 'Step 2 of 5 — Location'}
+              {currentStep === 'step3-language' && 'Step 3 of 5 — Language'}
+              {currentStep === 'step4-symptom' && 'Step 4 of 5 — Symptoms'}
+              {currentStep === 'step5-budget' && 'Step 5 of 5 — Budget & Contact'}
+            </Text>
           </View>
         )}
       </View>

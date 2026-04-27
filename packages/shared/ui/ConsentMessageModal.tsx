@@ -21,8 +21,8 @@ interface ConsentMessageModalProps {
   contactRelationship?: string;
   userName?: string;
   userCity: string;
-  providerName: string;
-  providerAddress: string;
+  providerName?: string;
+  providerAddress?: string;
   testID?: string;
 }
 
