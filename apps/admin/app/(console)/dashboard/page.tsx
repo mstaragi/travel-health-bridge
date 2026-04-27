@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   useAdminSessions, 
   useAdminDailySummary 
@@ -9,6 +9,7 @@ import {
   calculateDisplacementRate, 
   calculateReuseIntentRate 
 } from '@travelhealthbridge/shared/utils/displacement';
+import { supabase } from '@travelhealthbridge/shared';
 import { 
   TrendingUp, 
   Target, 
@@ -17,7 +18,8 @@ import {
   AlertTriangle,
   PhoneOff,
   MapPinOff,
-  ArrowRight
+  ArrowRight,
+  RefreshCw
 } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -26,20 +28,119 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+interface DailySummaryMetrics {
+  displacement_rate: number;
+  reuse_intent_rate: number;
+  no_answer_events: number;
+  city_gaps: Array<{name: string, hits: number, trends: string}>;
+  last_refreshed: string;
+}
+
 export default function OverviewPage() {
+  const [metrics, setMetrics] = useState<DailySummaryMetrics | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const { data: sessions, isLoading: isSessionsLoading } = useAdminSessions();
   const { data: summary } = useAdminDailySummary();
 
-  // Extract feedback for rates
-  const feedbackData = sessions?.map(s => s.feedback).filter(Boolean).flat() || [];
-  const displacementRate = calculateDisplacementRate(feedbackData);
-  const reuseRate = calculateReuseIntentRate(feedbackData);
+  // Calculate all 4 metrics
+  const calculateMetrics = useCallback(async () => {
+    try {
+      // Extract feedback for displacement and reuse rates
+      const feedbackData = sessions?.map(s => s.feedback).filter(Boolean).flat() || [];
+      const displacementRate = calculateDisplacementRate(feedbackData);
+      const reuseRate = calculateReuseIntentRate(feedbackData);
 
-  // Group no-answers (simulated from sessions for now)
+      // Count no-answer events (provider_no_answer_reported events)
+      const { data: noAnswerEvents, error: noAnswerError } = await supabase
+        .from('triage_sessions')
+        .select('count', { count: 'exact' })
+        .is('provider_answered_at', null)
+        .gt('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
+
+      const noAnswerCount = noAnswerError ? 0 : (noAnswerEvents?.[0]?.count || 0);
+
+      // Get city gaps - cities with high requests but few providers
+      const { data: cityGaps, error: cityGapsError } = await supabase
+        .from('triage_sessions')
+        .select('city_id')
+        .gt('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
+
+      const cityCounts: Record<string, number> = {};
+      cityGaps?.forEach(row => {
+        cityCounts[row.city_id] = (cityCounts[row.city_id] || 0) + 1;
+      });
+
+      const topCityGaps = Object.entries(cityCounts)
+        .map(([city, hits]) => ({
+          name: city,
+          hits,
+          trends: hits > 30 ? 'up' : 'stable'
+        }))
+        .sort((a, b) => b.hits - a.hits)
+        .slice(0, 3);
+
+      setMetrics({
+        displacement_rate: displacementRate,
+        reuse_intent_rate: reuseRate,
+        no_answer_events: noAnswerCount,
+        city_gaps: topCityGaps,
+        last_refreshed: new Date().toISOString()
+      });
+
+      setLastRefresh(new Date());
+    } catch (err) {
+      console.error('Error calculating metrics:', err);
+    }
+  }, [sessions]);
+
+  // Initial load
+  useEffect(() => {
+    calculateMetrics();
+  }, [calculateMetrics, sessions]);
+
+  // Auto-refresh every 5 minutes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsRefreshing(true);
+      calculateMetrics().then(() => setIsRefreshing(false));
+    }, 5 * 60 * 1000); // 5 minutes
+
+    return () => clearInterval(interval);
+  }, [calculateMetrics]);
+
   const noAnswerEvents = sessions?.filter(s => s.call_now_tapped_at && !s.feedback) || [];
+
+  if (!metrics && isSessionsLoading) {
+    return (
+      <div className="space-y-8 pb-12 animate-pulse">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="h-64 bg-slate-800 rounded-3xl" />
+          <div className="h-64 bg-slate-800 rounded-3xl" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 pb-12">
+      {/* Refresh Status */}
+      <div className="flex items-center justify-between px-4 py-2 bg-slate-800/30 rounded-lg border border-slate-700/50">
+        <span className="text-xs text-slate-400 font-mono">
+          Last refreshed: {lastRefresh.toLocaleTimeString()} (Auto-refresh every 5 min)
+        </span>
+        <button
+          onClick={() => {
+            setIsRefreshing(true);
+            calculateMetrics().then(() => setIsRefreshing(false));
+          }}
+          disabled={isRefreshing}
+          className="p-2 hover:bg-slate-700 rounded transition-colors disabled:opacity-50"
+        >
+          <RefreshCw className={`w-4 h-4 text-teal-400 ${isRefreshing ? 'animate-spin' : ''}`} />
+        </button>
+      </div>
+
       {/* Primary Analytics Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Displacement Card */}
@@ -54,7 +155,7 @@ export default function OverviewPage() {
             </h3>
             <div className="flex items-baseline gap-3 mt-auto">
               <span className="text-6xl font-black text-white tracking-tighter">
-                {displacementRate.toFixed(1)}%
+                {metrics?.displacement_rate.toFixed(1) || '0'}%
               </span>
               <span className="text-teal-200 font-bold text-sm bg-teal-400/20 px-3 py-1 rounded-full border border-teal-300/30">
                 Rolling 7-Day
@@ -80,7 +181,7 @@ export default function OverviewPage() {
             </h3>
             <div className="flex items-baseline gap-3 mt-auto">
               <span className="text-6xl font-black text-white tracking-tighter">
-                {reuseRate.toFixed(1)}%
+                {metrics?.reuse_intent_rate.toFixed(1) || '0'}%
               </span>
               <span className="text-slate-400 font-bold text-sm bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
                 Travelers say "Yes"
@@ -103,7 +204,7 @@ export default function OverviewPage() {
               Provider No-Answers
             </h3>
             <span className="text-[10px] bg-rose-500/10 text-rose-500 px-2 py-1 rounded border border-rose-500/20 font-black">
-              7D REPORT
+              {metrics?.no_answer_events || 0} EVENTS
             </span>
           </div>
           <div className="divide-y divide-slate-800/50">
@@ -153,24 +254,26 @@ export default function OverviewPage() {
           </div>
           <div className="p-8">
             <div className="space-y-6">
-              {[
-                { name: 'Hyderabad', hits: 42, trends: 'up' },
-                { name: 'Chennai', hits: 31, trends: 'stable' },
-                { name: 'Kochi', hits: 18, trends: 'up' },
-              ].map((city) => (
-                <div key={city.name} className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between font-bold text-xs uppercase tracking-widest">
-                    <span className="text-slate-300">{city.name}</span>
-                    <span className="text-white">{city.hits} hits</span>
+              {metrics?.city_gaps && metrics.city_gaps.length > 0 ? (
+                metrics.city_gaps.map((city) => (
+                  <div key={city.name} className="flex flex-col gap-2">
+                    <div className="flex items-center justify-between font-bold text-xs uppercase tracking-widest">
+                      <span className="text-slate-300">{city.name}</span>
+                      <span className="text-white">{city.hits} hits</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-amber-500 rounded-full transition-all duration-1000" 
+                        style={{ width: `${(city.hits / Math.max(50, ...metrics.city_gaps.map(c => c.hits))) * 100}%` }}
+                      />
+                    </div>
                   </div>
-                  <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-amber-500 rounded-full transition-all duration-1000" 
-                      style={{ width: `${(city.hits / 50) * 100}%` }}
-                    />
-                  </div>
+                ))
+              ) : (
+                <div className="text-slate-500 text-sm text-center py-8">
+                  No city gap data available yet
                 </div>
-              ))}
+              )}
             </div>
           </div>
           <div className="p-4 bg-slate-900/50 border-t border-slate-800">
