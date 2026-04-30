@@ -57,7 +57,7 @@ export default function Step1Urgency() {
     setUrgency(level);
 
     if (level === 'emergency') {
-      router.replace('/(tabs)/emergency');
+      router.replace('/(emergency)/emergency-flow');
     } else {
       router.push('/(triage)/step2-city');
     }
@@ -66,9 +66,17 @@ export default function Step1Urgency() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.inner}>
+        {/* Progress Indicator */}
+        <View style={styles.progressSection}>
+          <Text style={styles.stepNumber}>Step 1 of 5</Text>
+          <View style={styles.progressBar}>
+            <View style={[styles.progressFill, { width: '20%' }]} />
+          </View>
+        </View>
+
         <View style={styles.header}>
           <Text style={styles.title}>How urgent is it?</Text>
-          <Text style={styles.subtitle}>Select the level that best describes your current situation.</Text>
+          <Text style={styles.subtitle}>Select the level that best describes your current situation. We'll connect you with the right provider.</Text>
         </View>
 
         <View style={styles.optionsContainer}>
@@ -114,8 +122,26 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: spacing.xl,
   },
+  progressSection: {
+    marginBottom: spacing.lg,
+  },
+  stepNumber: {
+    ...typography.labelSmall,
+    color: palette.navy[400],
+    marginBottom: spacing.sm,
+    fontWeight: typography.fontWeight.bold,
+  },
+  progressBar: {
+    height: 4,
+    backgroundColor: palette.navy[50],
+    borderRadius: 2,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    backgroundColor: palette.teal[600],
+  },
   header: {
-    marginTop: Platform.OS === 'ios' ? 20 : 40,
     marginBottom: spacing.xxl,
   },
   title: {

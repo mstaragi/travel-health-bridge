@@ -12,10 +12,11 @@ import * as Haptics from 'expo-haptics';
 import { track } from '@travelhealthbridge/shared';
 
 const BUDGET_OPTIONS = [
-  { label: 'Minimal', value: 500 },
-  { label: 'Mid-range', value: 1500 },
-  { label: 'Premium', value: 3000 },
-  { label: 'Any', value: 10000 },
+  { label: '₹200–₹400', value: 300 },
+  { label: '₹400–₹600', value: 500 },
+  { label: '₹600–₹900', value: 750 },
+  { label: '₹900–₹1200', value: 1050 },
+  { label: 'Any Price', value: 10000 },
 ];
 
 export default function Step5Budget() {
@@ -84,6 +85,14 @@ export default function Step5Budget() {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.inner}>
             <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+              {/* Progress Indicator */}
+              <View style={styles.progressSection}>
+                <Text style={styles.stepNumber}>Step 5 of 5</Text>
+                <View style={styles.progressBar}>
+                  <View style={[styles.progressFill, { width: '100%' }]} />
+                </View>
+              </View>
+
               <View style={styles.header}>
                 <Text style={styles.title}>Budget & Contact</Text>
                 <Text style={styles.subtitle}>Final details to refine your recommendations.</Text>
@@ -94,6 +103,7 @@ export default function Step5Budget() {
                   <Banknote size={20} color={palette.navy[900]} />
                   <Text style={styles.sectionTitle}>Maximum Consultation Fee</Text>
                 </View>
+                <Text style={styles.fieldHint}>Select your budget range for doctor consultation:</Text>
                 <View style={styles.budgetGrid}>
                   {BUDGET_OPTIONS.map((opt) => (
                     <TouchableOpacity
@@ -115,7 +125,7 @@ export default function Step5Budget() {
                         styles.chipText,
                         budget === opt.value.toString() && styles.chipTextActive
                       ]}>
-                        {opt.label === 'Any' ? 'Any Price' : `₹${opt.value}`}
+                        {opt.label}
                       </Text>
                     </TouchableOpacity>
                   ))}
@@ -125,23 +135,27 @@ export default function Step5Budget() {
               <View style={styles.section}>
                 <View style={styles.sectionHeader}>
                   <MessageCircle size={20} color={palette.navy[900]} />
-                  <Text style={styles.sectionTitle}>WhatsApp Number (Optional)</Text>
+                  <Text style={styles.sectionTitle}>WhatsApp Number</Text>
                 </View>
-                <Text style={styles.fieldHint}>We'll send your recommendation via WhatsApp for easy access.</Text>
-                <Input
-                  value={whatsappNumber || ''}
-                  onChangeText={setWhatsappNumber}
-                  placeholder="+91 98765 43210"
-                  keyboardType="phone-pad"
-                  wrapperStyle={styles.inputWrapper}
-                />
+                <Text style={styles.fieldHint}>Optional: We'll send your doctor recommendations via WhatsApp for quick access</Text>
+                <View style={styles.inputContainer}>
+                  <MessageCircle size={18} color={palette.teal[600]} style={styles.inputIcon} />
+                  <TextInput
+                    value={whatsappNumber || ''}
+                    onChangeText={setWhatsappNumber}
+                    placeholder="+91 98765 43210"
+                    keyboardType="phone-pad"
+                    placeholderTextColor={palette.navy[300]}
+                    style={styles.whatsappInput}
+                  />
+                </View>
               </View>
             </ScrollView>
 
             <View style={styles.footer}>
               {error ? <Text style={styles.errorText}>{error}</Text> : null}
               <Button
-                title="Find My Doctor"
+                title="🔍 Find My Doctor"
                 onPress={handleFinish}
                 variant="primary"
                 size="lg"
@@ -170,8 +184,26 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: spacing.xl,
   },
+  progressSection: {
+    marginBottom: spacing.lg,
+  },
+  stepNumber: {
+    ...typography.labelSmall,
+    color: palette.navy[400],
+    marginBottom: spacing.sm,
+    fontWeight: typography.fontWeight.bold,
+  },
+  progressBar: {
+    height: 4,
+    backgroundColor: palette.navy[50],
+    borderRadius: 2,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    backgroundColor: palette.teal[600],
+  },
   header: {
-    marginTop: Platform.OS === 'ios' ? 20 : 40,
     marginBottom: spacing.xxl,
   },
   title: {
@@ -238,6 +270,25 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: palette.navy[50],
     borderWidth: 0,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: palette.navy[100],
+    borderRadius: 12,
+    paddingHorizontal: spacing.md,
+    backgroundColor: palette.white,
+    height: 56,
+  },
+  inputIcon: {
+    marginRight: spacing.sm,
+  },
+  whatsappInput: {
+    flex: 1,
+    fontSize: typography.fontSize.md,
+    color: palette.navy[900],
+    fontFamily: typography.fontFamily.default,
   },
   footer: {
     paddingVertical: spacing.xl,

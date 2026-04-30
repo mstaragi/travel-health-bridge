@@ -8,6 +8,7 @@ import { rankProviders } from '@travelhealthbridge/shared/utils/rankProviders';
 import { SYMPTOM_TO_SPECIALTY, HELPLINE_WHATSAPP_NUMBER } from '@travelhealthbridge/shared/constants';
 import { haversineDistance } from '@travelhealthbridge/shared/utils/distance';
 import { FailureBottomSheet } from '@travelhealthbridge/shared/ui/FailureBottomSheet';
+import { DoctorResultCard } from '../components/DoctorResultCard';
 import { palette, typography, spacing } from '@travelhealthbridge/shared/ui/tokens';
 import { Phone, MapPin, Clock, Star, AlertCircle, ChevronRight, Navigation, X } from 'lucide-react-native';
 import Modal from 'react-native-modal';
@@ -238,82 +239,37 @@ export default function ResultScreen() {
           </View>
         ) : (
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-            {/* Primary Recommendation */}
-            <View style={styles.primaryCard}>
-              <View style={styles.cardHeader}>
-                <View style={styles.bestMatchBadge}>
-                  <Star size={12} color={palette.white} fill={palette.white} />
-                  <Text style={styles.bestMatchText}>BEST MATCH</Text>
-                </View>
-                <View style={styles.priceTag}>
-                  <Text style={styles.priceText}>₹{primary.fee_opd?.min}</Text>
-                </View>
-              </View>
+            {/* Doctor Results with Enhanced Cards */}
+            {results.map((provider, index) => (
+              <DoctorResultCard
+                key={provider.id}
+                provider={provider}
+                rank={index + 1}
+                userLocation={userLocation}
+                onCall={handleCall}
+                onDirections={handleDirections}
+              />
+            ))}
 
-              <Text style={styles.providerName}>{primary.name}</Text>
-              <Text style={styles.providerSpecialty}>{primary.specialties?.[0]}</Text>
-              
-              <View style={styles.detailList}>
-                <View style={styles.detailItem}>
-                  <MapPin size={16} color={palette.navy[300]} />
-                  <Text style={styles.detailText} numberOfLines={1}>
-                    {primary.address} • {userLocation ? `${haversineDistance(userLocation.lat, userLocation.lng, primary.lat, primary.lng).toFixed(1)} km away` : 'Calculating distance...'}
-                  </Text>
-                </View>
-                <View style={styles.detailItem}>
-                  <Clock size={16} color={palette.navy[300]} />
-                  <Text style={styles.detailText}>Open Now • Verified: Today</Text>
-                </View>
-              </View>
-
-              <View style={styles.actionRow}>
-                <TouchableOpacity 
-                  style={styles.callButton} 
-                  onPress={() => handleCall(primary)}
-                >
-                  <Phone size={20} color={palette.white} />
-                  <Text style={styles.callButtonText}>Call to Confirm</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  style={styles.dirButton}
-                  onPress={() => handleDirections(primary)}
-                >
-                  <Navigation size={20} color={palette.teal[600]} />
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            {/* Secondary Alternative */}
-            {secondary && (
-              <View style={styles.secondarySection}>
-                <Text style={styles.sectionTitle}>Alternative if unavailable</Text>
-                <TouchableOpacity 
-                  style={styles.secondaryCard}
-                  onPress={() => handleCall(secondary)}
-                >
-                  <View style={styles.secondaryHeader}>
-                    <Text style={styles.secondaryName}>{secondary.name}</Text>
-                    <Text style={styles.secondaryPrice}>₹{secondary.fee_opd?.min}</Text>
-                  </View>
-                  <View style={styles.secondaryFooter}>
-                    <View style={styles.detailItem}>
-                      <MapPin size={14} color={palette.navy[200]} />
-                      <Text style={styles.secondaryDetail} numberOfLines={1}>
-                        {secondary.address} • {userLocation ? `${haversineDistance(userLocation.lat, userLocation.lng, secondary.lat, secondary.lng).toFixed(1)} km away` : ''}
-                      </Text>
-                    </View>
-                    <ChevronRight size={18} color={palette.navy[100]} />
-                  </View>
-                </TouchableOpacity>
-              </View>
-            )}
-
+            {/* Safety Message */}
             <View style={styles.safetyBox}>
               <AlertCircle size={20} color={palette.amber[600]} />
               <Text style={styles.safetyText}>
                 The provider is expecting your call. Mention <Text style={styles.bold}>Travel Health Bridge</Text> for upfront pricing commitment.
               </Text>
             </View>
+
+            {/* Helpline Fallback */}
+            <TouchableOpacity style={styles.helplineFallback} onPress={handleHelpline}>
+              <Phone size={20} color={palette.rose[600]} />
+              <View>
+                <Text style={styles.helplineTitle}>Can't reach anyone?</Text>
+                <Text style={styles.helplineSubtitle}>Call our medic helpline for immediate assistance</Text>
+              </View>
+              <ChevronRight size={20} color={palette.navy[200]} />
+            </TouchableOpacity>
+
+            <View style={styles.spacer} />
           </ScrollView>
         )}
       </View>
@@ -585,6 +541,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     borderWidth: 1,
     borderColor: palette.amber[100],
+    marginBottom: spacing.lg,
   },
   safetyText: {
     flex: 1,
@@ -592,6 +549,31 @@ const styles = StyleSheet.create({
     color: palette.amber[900],
     lineHeight: 18,
     fontWeight: typography.fontWeight.medium,
+  },
+  helplineFallback: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: palette.rose[50],
+    padding: spacing.lg,
+    borderRadius: 16,
+    gap: spacing.md,
+    marginBottom: spacing.lg,
+    borderWidth: 1,
+    borderColor: palette.rose[100],
+  },
+  helplineTitle: {
+    fontSize: typography.fontSize.md,
+    fontWeight: typography.fontWeight.bold,
+    color: palette.rose[700],
+  },
+  helplineSubtitle: {
+    fontSize: typography.fontSize.sm,
+    color: palette.rose[600],
+    marginTop: 2,
+  },
+  spacer: {
+    height: spacing.xl,
+  },
   },
   emptyState: {
     flex: 1,

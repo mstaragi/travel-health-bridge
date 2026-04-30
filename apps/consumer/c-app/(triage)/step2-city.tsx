@@ -72,6 +72,14 @@ export default function Step2City() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {/* Progress Indicator */}
+        <View style={styles.progressSection}>
+          <Text style={styles.stepNumber}>Step 2 of 5</Text>
+          <View style={styles.progressBar}>
+            <View style={[styles.progressFill, { width: '40%' }]} />
+          </View>
+        </View>
+
         <View style={styles.header}>
           <Text style={styles.title}>Where are you?</Text>
           <Text style={styles.subtitle}>We need your location to find the nearest verified doctors.</Text>
@@ -87,7 +95,7 @@ export default function Step2City() {
           ) : (
             <>
               <Navigation size={20} color={palette.teal[600]} style={styles.detectIcon} />
-              <Text style={styles.detectText}>Detect My Location</Text>
+              <Text style={styles.detectText}>📍 Detect My Location</Text>
             </>
           )}
         </TouchableOpacity>
@@ -144,8 +152,26 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: spacing.xl,
   },
+  progressSection: {
+    marginBottom: spacing.lg,
+  },
+  stepNumber: {
+    ...typography.labelSmall,
+    color: palette.navy[400],
+    marginBottom: spacing.sm,
+    fontWeight: typography.fontWeight.bold,
+  },
+  progressBar: {
+    height: 4,
+    backgroundColor: palette.navy[50],
+    borderRadius: 2,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    backgroundColor: palette.teal[600],
+  },
   header: {
-    marginTop: Platform.OS === 'ios' ? 20 : 40,
     marginBottom: spacing.xxl,
   },
   title: {
